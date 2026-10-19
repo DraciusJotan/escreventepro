@@ -50,52 +50,72 @@ export default function Login() {
 
   return (
     <main className={styles.page}>
-      <div className={styles.card}>
-        <h1 className={styles.brand}>Escrevente Pro</h1>
-        <p className={styles.subtitle}>Seu treino diário para o TJSP</p>
+      <aside className={styles.side}>
+        <span className={styles.brand}>Escrevente Pro</span>
+        <div>
+          <p className={styles.lead}>Constância vence talento na hora da prova.</p>
+          <ul className={styles.points}>
+            <li>Banco de questões próprio, organizado por matéria e assunto</li>
+            <li>Revisão espaçada: o que você erra volta no dia certo</li>
+            <li>Mapa de estudo para enxergar sua sequência</li>
+          </ul>
+        </div>
+        <span className={styles.footnote}>Escrevente Técnico Judiciário · TJSP · VUNESP</span>
+      </aside>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <label>
-            E-mail
-            <input
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-          <label>
-            Senha
-            <input
-              type="password"
-              autoComplete={isLogin ? 'current-password' : 'new-password'}
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
+      <section className={styles.formSide}>
+        <div className={styles.formWrap}>
+          <span className={`${styles.brand} ${styles.mobileBrand}`}>Escrevente Pro</span>
+          <h1 className={styles.title}>{isLogin ? 'Entrar' : 'Criar conta'}</h1>
+          <p className={styles.subtitle}>
+            {isLogin ? 'Continue de onde parou.' : 'Leva menos de um minuto.'}
+          </p>
 
-          {error && <p className="alert alert-error">{error}</p>}
-          {info && <p className="alert alert-info">{info}</p>}
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <label>
+              E-mail
+              <input
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+            <label>
+              Senha
+              <input
+                type="password"
+                autoComplete={isLogin ? 'current-password' : 'new-password'}
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
 
-          <button type="submit" className="btn btn-primary" disabled={submitting}>
-            {submitting ? 'Aguarde…' : isLogin ? 'Entrar' : 'Criar conta'}
-          </button>
-        </form>
+            {error && <p className="alert alert-error">{error}</p>}
+            {info && <p className="alert alert-info">{info}</p>}
 
-        <button
-          type="button"
-          className={styles.switch}
-          onClick={() => {
-            setMode(isLogin ? 'signup' : 'login')
-            setError('')
-          }}
-        >
-          {isLogin ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Entrar'}
-        </button>
-      </div>
+            <button type="submit" className="btn btn-primary" disabled={submitting}>
+              {submitting ? 'Aguarde…' : isLogin ? 'Entrar' : 'Criar conta'}
+            </button>
+          </form>
+
+          <p className={styles.switch}>
+            {isLogin ? 'Ainda não tem conta?' : 'Já tem conta?'}{' '}
+            <button
+              type="button"
+              onClick={() => {
+                setMode(isLogin ? 'signup' : 'login')
+                setError('')
+              }}
+            >
+              {isLogin ? 'Cadastre-se' : 'Entrar'}
+            </button>
+          </p>
+        </div>
+      </section>
     </main>
   )
 }

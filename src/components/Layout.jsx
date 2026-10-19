@@ -1,24 +1,45 @@
-import { NavLink, Outlet } from 'react-router'
+import { useEffect, useState } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
+import { countDueReviews } from '../services/answers'
+import Icon from './Icon'
 import styles from './Layout.module.css'
 
 const NAV_ITEMS = [
-  { to: '/', label: 'Início', icon: '⌂' },
-  { to: '/resolver', label: 'Resolver', icon: '✎' },
-  { to: '/revisao', label: 'Revisão', icon: '↻' },
-  { to: '/questoes', label: 'Questões', icon: '☰' },
-  { to: '/desempenho', label: 'Desempenho', icon: '▤' },
+  { to: '/', label: 'Início', icon: 'home' },
+  { to: '/resolver', label: 'Resolver', icon: 'pencil' },
+  { to: '/revisao', label: 'Revisão', icon: 'repeat', badge: true },
+  { to: '/questoes', label: 'Questões', icon: 'book' },
+  { to: '/desempenho', label: 'Desempenho', icon: 'chart' },
 ]
 
-// Mobile: barra de navegação fixa embaixo (alcance do polegar).
-// Desktop (>= 768px): a mesma barra vira um menu no topo.
+// Celular: barra de abas fixa embaixo (alcance do polegar).
+// Computador (>= 900px): barra lateral à esquerda.
 export default function Layout() {
   const { user, signOut } = useAuth()
+  const location = useLocation()
+  const [due, setDue] = useState(0)
+
+  // Atualiza o contador da Revisão a cada troca de tela.
+  useEffect(() => {
+    countDueReviews().then(setDue, () => {})
+  }, [location.pathname])
 
   return (
     <div className={styles.shell}>
-      <header className={styles.header}>
+      <header className={styles.topbar}>
         <span className={styles.brand}>Escrevente Pro</span>
+        <button type="button" className={styles.iconButton} onClick={signOut} aria-label="Sair">
+          <Icon name="logout" />
+        </button>
+      </header>
+
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarBrand}>
+          <span className={styles.brand}>Escrevente Pro</span>
+          <span className={styles.tagline}>TJSP · VUNESP</span>
+        </div>
+
         <nav className={styles.nav} aria-label="Principal">
           {NAV_ITEMS.map((item) => (
             <NavLink
@@ -27,16 +48,27 @@ export default function Layout() {
               end={item.to === '/'}
               className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
             >
-              <span className={styles.icon} aria-hidden="true">{item.icon}</span>
+              <span className={styles.iconWrap}>
+                <Icon name={item.icon} />
+                {item.badge && due > 0 && <span className={styles.dot} aria-hidden="true" />}
+              </span>
               <span>{item.label}</span>
+              {item.badge && due > 0 && (
+                <span className={styles.count} aria-label={`${due} pendentes`}>
+                  {due}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>
+
         <div className={styles.account}>
           <span className={styles.email}>{user.email}</span>
-          <button type="button" className="btn" onClick={signOut}>Sair</button>
+          <button type="button" className={styles.signOut} onClick={signOut}>
+            <Icon name="logout" size={16} /> Sair
+          </button>
         </div>
-      </header>
+      </aside>
 
       <main className={styles.main}>
         <Outlet />

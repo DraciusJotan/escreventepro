@@ -1,54 +1,80 @@
-.progress {
+.quiz {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.progressText {
   display: flex;
   justify-content: space-between;
-  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: var(--space-2);
+}
+
+.track {
+  height: 3px;
+  background: var(--border);
+}
+
+.bar {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.25s;
+}
+
+/* A questão como folha de prova */
+.paper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+}
+
+.meta {
+  margin: 0 0 var(--space-4);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
 }
 
 .statement {
-  margin: 0;
+  margin: 0 0 var(--space-5);
+  max-width: 68ch;
   white-space: pre-line;
-  font-size: 1.05rem;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  line-height: 1.65;
 }
 
 .options {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  border-top: 1px solid var(--border);
 }
 
 .option {
   display: flex;
-  gap: var(--space-3);
   align-items: flex-start;
-  text-align: left;
+  gap: var(--space-4);
   width: 100%;
+  padding: var(--space-3) var(--space-3);
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  background: none;
   font: inherit;
+  text-align: left;
   color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: var(--space-3);
-  min-height: 48px;
   cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.option:hover:not(:disabled) {
+  background: var(--info-bg);
 }
 
 .option:disabled {
   cursor: default;
-}
-
-.option[data-state='selected'] {
-  border-color: var(--primary);
-  background: var(--info-bg);
-}
-
-.option[data-state='correct'] {
-  border-color: var(--success);
-  background: var(--success-bg);
-}
-
-.option[data-state='wrong'] {
-  border-color: var(--danger);
-  background: var(--danger-bg);
 }
 
 .letter {
@@ -57,13 +83,134 @@
   height: 28px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  font-weight: 700;
-  font-size: 0.9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
-.ok {
+.optionText {
+  padding-top: 2px;
+  line-height: 1.5;
+}
+
+.option[data-state='selected'] {
+  border-left-color: var(--primary);
+  background: var(--info-bg);
+}
+
+.option[data-state='selected'] .letter {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.option[data-state='correct'] {
+  border-left-color: var(--success);
+  background: var(--success-bg);
+}
+
+.option[data-state='correct'] .letter {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+
+.option[data-state='wrong'] {
+  border-left-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.option[data-state='wrong'] .letter {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+.option[data-state='dim'] {
+  opacity: 0.55;
+}
+
+.feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: 0.95rem;
+}
+
+.feedback[data-ok='true'] {
+  border-left-color: var(--success);
   background: var(--success-bg);
   color: var(--success);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.footer .btn-primary {
+  min-width: 170px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: none;
+}
+
+@media (hover: hover) and (min-width: 900px) {
+  .hint {
+    display: block;
+  }
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.summary p {
+  margin: 0;
+}
+
+.summaryPct {
+  font-family: var(--font-serif);
+  font-size: 4rem;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary .btn {
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 560px) {
+  .paper {
+    padding: var(--space-4);
+  }
+
+  .statement {
+    font-size: 1.08rem;
+  }
+
+  .footer .btn-primary {
+    min-width: 0;
+    flex: 1;
+  }
 }

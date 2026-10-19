@@ -17,7 +17,7 @@ App web (mobile-first) para estudar para o concurso de **Escrevente Técnico Jud
 
 | Camada | Tecnologia |
 |---|---|
-| Frontend | React 19, Vite, React Router, CSS Modules (JavaScript) |
+| Frontend | React 19, Vite, React Router, CSS Modules (JavaScript), fontes IBM Plex Sans e Source Serif 4 |
 | Backend | Supabase: Auth, Postgres, Row Level Security, funções SQL (RPC) |
 | Planilhas | SheetJS (carregado sob demanda só na tela de importação) |
 | Deploy | Vercel |
@@ -76,6 +76,12 @@ Abra http://localhost:5173 e crie sua conta.
 | `npm run lint` | Lint com oxlint |
 | `node scripts/gen-template.mjs` | Regera `public/modelo-questoes.xlsx` e `.csv` |
 | `node scripts/parse-check.mjs` | Verifica o parser de importação |
+| `node scripts/pdf-to-csv.mjs prova.pdf ...` | Converte prova em PDF + gabarito para CSV |
+| `node scripts/parse-prova-check.mjs` | Verifica o parser de provas |
+
+## Banco de questões
+
+Não existe dataset aberto da VUNESP. A ferramenta `scripts/pdf-to-csv.mjs` converte as provas anteriores em PDF (públicas) para a planilha de importação. Guia completo em [docs/banco-de-questoes.md](docs/banco-de-questoes.md).
 
 ## Importando questões
 

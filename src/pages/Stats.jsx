@@ -21,23 +21,23 @@ export default function Stats() {
 
   return (
     <section>
-      <div className="page-header">
+      <header className="page-header">
         <h1>Desempenho</h1>
+      </header>
+
+      <div className="figures" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
+        <div>
+          <p className="big-number">{totals.total ? `${percent(totals.correct, totals.total)}%` : '–'}</p>
+          <span className="muted">de acerto geral</span>
+        </div>
+        <div>
+          <p className="big-number">{totals.total}</p>
+          <span className="muted">respostas</span>
+        </div>
       </div>
 
-      <div className="grid-stats">
-        <div className="card">
-          <div className="big-number">{totals.total ? `${percent(totals.correct, totals.total)}%` : '–'}</div>
-          <div className="muted">de acerto geral</div>
-        </div>
-        <div className="card">
-          <div className="big-number">{totals.total}</div>
-          <div className="muted">respostas</div>
-        </div>
-      </div>
-
+      <h2 className="section-title">Por matéria</h2>
       <div className="card">
-        <h2 style={{ marginTop: 0, fontSize: '1.1rem' }}>Por matéria</h2>
         {stats.map((s) => (
           <StatBar
             key={s.subject_id}
@@ -47,11 +47,11 @@ export default function Stats() {
             highlight={weakIds.has(s.subject_id)}
           />
         ))}
-        <p className="muted" style={{ marginBottom: 0 }}>
-          Em destaque: as 3 matérias com menor acerto, considerando só as que têm pelo menos{' '}
-          {MIN_ANSWERS_FOR_RANKING} respostas.
-        </p>
       </div>
+      <p className="muted" style={{ fontSize: '0.85rem' }}>
+        O ponto vermelho marca as 3 matérias com menor acerto, entre as que têm pelo menos{' '}
+        {MIN_ANSWERS_FOR_RANKING} respostas.
+      </p>
     </section>
   )
 }

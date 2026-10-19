@@ -5,6 +5,7 @@ import StatBar from '../components/StatBar'
 import { addDays, heatmapRange, todayISO } from '../lib/dates'
 import { countDueReviews } from '../services/answers'
 import { getDailyActivity, getSubjectStats, percent, weakestSubjects } from '../services/stats'
+import styles from './Dashboard.module.css'
 
 // Dias seguidos com pelo menos uma questão. Se hoje ainda não teve, a sequência
 // não quebra: ela conta a partir de ontem.
@@ -19,6 +20,13 @@ function currentStreak(activity) {
   }
   return streak
 }
+
+const dateLabel = new Intl.DateTimeFormat('pt-BR', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  timeZone: 'America/Sao_Paulo',
+}).format(new Date())
 
 export default function Dashboard() {
   const [data, setData] = useState(null)
@@ -36,8 +44,7 @@ export default function Dashboard() {
   if (!data) return <p className="muted">Carregando…</p>
 
   const { activity, due, stats } = data
-  const today = todayISO()
-  const todayCount = activity.find((a) => a.day === today)?.total ?? 0
+  const todayCount = activity.find((a) => a.day === todayISO())?.total ?? 0
   const yearTotal = activity.reduce((sum, a) => sum + a.total, 0)
   const totals = stats.reduce((t, s) => ({ total: t.total + s.total, correct: t.correct + s.correct }), {
     total: 0,
@@ -47,54 +54,69 @@ export default function Dashboard() {
 
   return (
     <section>
-      <div className="page-header">
-        <h1>Início</h1>
+      <header className="page-header">
+        <div>
+          <p className="eyebrow">{dateLabel}</p>
+          <h1>Hoje</h1>
+        </div>
+      </header>
+
+      <div className={styles.review} data-pending={due > 0}>
+        <div>
+          <p className={styles.reviewTitle}>
+            {due > 0
+              ? `${due} ${due === 1 ? 'questão pendente' : 'questões pendentes'} na revisão`
+              : 'Revisão em dia'}
+          </p>
+          <p className="muted" style={{ margin: 0 }}>
+            {due > 0
+              ? 'São questões que você errou e que vencem hoje ou antes.'
+              : 'Nada vence hoje. Aproveite para resolver questões novas.'}
+          </p>
+        </div>
+        <Link className="btn btn-primary" to={due > 0 ? '/revisao' : '/resolver'}>
+          {due > 0 ? 'Revisar agora' : 'Resolver questões'}
+        </Link>
       </div>
 
-      <div className="card stack" style={{ marginBottom: 'var(--space-4)' }}>
-        <div className="row" style={{ justifyContent: 'space-between' }}>
-          <div>
-            <div className="big-number">{due}</div>
-            <div className="muted">{due === 1 ? 'questão para revisar hoje' : 'questões para revisar hoje'}</div>
-          </div>
-          <Link className="btn btn-primary" to={due ? '/revisao' : '/resolver'}>
-            {due ? 'Revisar agora' : 'Resolver questões'}
-          </Link>
+      <div className="figures">
+        <div>
+          <p className="big-number">{todayCount}</p>
+          <span className="muted">questões hoje</span>
+        </div>
+        <div>
+          <p className="big-number">{currentStreak(activity)}</p>
+          <span className="muted">dias seguidos</span>
+        </div>
+        <div>
+          <p className="big-number">{totals.total ? `${percent(totals.correct, totals.total)}%` : '–'}</p>
+          <span className="muted">de acerto</span>
         </div>
       </div>
 
-      <div className="grid-stats">
-        <div className="card">
-          <div className="big-number">{todayCount}</div>
-          <div className="muted">hoje</div>
-        </div>
-        <div className="card">
-          <div className="big-number">{currentStreak(activity)}</div>
-          <div className="muted">dias seguidos</div>
-        </div>
-        <div className="card">
-          <div className="big-number">{totals.total ? `${percent(totals.correct, totals.total)}%` : '–'}</div>
-          <div className="muted">de acerto geral</div>
-        </div>
-      </div>
-
-      <div className="card" style={{ marginBottom: 'var(--space-4)' }}>
-        <h2 style={{ marginTop: 0, fontSize: '1.1rem' }}>
+      <div className="section">
+        <h2 className="section-title">
           {yearTotal} {yearTotal === 1 ? 'questão' : 'questões'} no último ano
         </h2>
-        <Heatmap activity={activity} />
+        <div className="card">
+          <Heatmap activity={activity} />
+        </div>
       </div>
 
-      <div className="card">
-        <h2 style={{ marginTop: 0, fontSize: '1.1rem' }}>Matérias para reforçar</h2>
-        {weak.length === 0 ? (
-          <p className="muted" style={{ margin: 0 }}>
-            Aparece aqui depois de 10 respostas em uma matéria.
-          </p>
-        ) : (
-          weak.map((s) => <StatBar key={s.subject_id} label={s.name} correct={s.correct} total={s.total} highlight />)
-        )}
-        <p style={{ marginBottom: 0 }}>
+      <div className="section">
+        <h2 className="section-title">Matérias para reforçar</h2>
+        <div className="card">
+          {weak.length === 0 ? (
+            <p className="muted" style={{ margin: 0 }}>
+              Aparece aqui depois de 10 respostas em uma matéria.
+            </p>
+          ) : (
+            weak.map((s) => (
+              <StatBar key={s.subject_id} label={s.name} correct={s.correct} total={s.total} highlight />
+            ))
+          )}
+        </div>
+        <p style={{ margin: 'var(--space-3) 0 0' }}>
           <Link to="/desempenho">Ver desempenho completo</Link>
         </p>
       </div>

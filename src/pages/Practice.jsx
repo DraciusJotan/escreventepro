@@ -44,6 +44,7 @@ export default function Practice() {
         <QuizRunner
           questions={questions}
           mode="practice"
+          subjectNames={Object.fromEntries(subjects.map((s) => [s.id, s.name]))}
           exitLabel="Nova sessão"
           onExit={() => setQuestions(null)}
         />
@@ -59,20 +60,15 @@ export default function Practice() {
 
       <form className="card stack" onSubmit={start}>
         <fieldset className="stack" style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend style={{ fontWeight: 600, marginBottom: 'var(--space-2)' }}>
-            Matérias <span className="muted">(nenhuma marcada = todas)</span>
-          </legend>
-          {subjects.map((s) => (
-            <label key={s.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 'var(--space-3)', minHeight: 36 }}>
-              <input
-                type="checkbox"
-                checked={selected.includes(s.id)}
-                onChange={() => toggle(s.id)}
-                style={{ width: 20, height: 20 }}
-              />
-              {s.name}
-            </label>
-          ))}
+          <legend className="section-title">Matérias (nenhuma marcada = todas)</legend>
+          <div className="chips">
+            {subjects.map((s) => (
+              <label key={s.id} className="chip" data-on={selected.includes(s.id)}>
+                <input type="checkbox" checked={selected.includes(s.id)} onChange={() => toggle(s.id)} />
+                {s.name}
+              </label>
+            ))}
+          </div>
         </fieldset>
 
         <label>

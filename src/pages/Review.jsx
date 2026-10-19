@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import QuizRunner from '../components/QuizRunner'
 import { listDueQuestions } from '../services/answers'
+import { listSubjects } from '../services/subjects'
 
 export default function Review() {
   const navigate = useNavigate()
   const [questions, setQuestions] = useState(null)
   const [error, setError] = useState('')
 
+  const [subjectNames, setSubjectNames] = useState({})
+
   useEffect(() => {
     listDueQuestions().then(setQuestions, (e) => setError(e.message))
+    listSubjects().then((list) => setSubjectNames(Object.fromEntries(list.map((s) => [s.id, s.name]))))
   }, [])
 
   return (
@@ -40,6 +44,7 @@ export default function Review() {
           <QuizRunner
             questions={questions}
             mode="review"
+            subjectNames={subjectNames}
             exitLabel="Voltar ao início"
             onExit={() => navigate('/')}
           />

@@ -3,6 +3,7 @@ import { addDays, formatBR, heatmapRange, weekday } from '../lib/dates'
 import styles from './Heatmap.module.css'
 
 const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+const WEEKDAY_LABELS = { 1: 'seg', 3: 'qua', 5: 'sex' } // linha (0 = domingo) -> rótulo
 
 function level(count) {
   if (count === 0) return 0
@@ -47,22 +48,38 @@ export default function Heatmap({ activity }) {
   }, [])
 
   return (
-    <div className={styles.scroller} ref={scroller}>
-      <div className={styles.inner}>
-        <div className={styles.months} style={{ gridTemplateColumns: `repeat(${columns}, var(--cell))` }}>
-          {monthLabels.map((m) => (
-            <span key={m.col} style={{ gridColumn: m.col + 1 }}>
-              {m.label}
-            </span>
+    <div className={styles.wrap}>
+      <div className={styles.layout}>
+        <div className={styles.weekdays} aria-hidden="true">
+          {[0, 1, 2, 3, 4, 5, 6].map((d) => (
+            <span key={d}>{WEEKDAY_LABELS[d] ?? ''}</span>
           ))}
         </div>
-        <div
-          className={styles.grid}
-          role="img"
-          aria-label="Mapa de calor de questões resolvidas nos últimos 12 meses"
-        >
-          {cells}
+        <div className={styles.scroller} ref={scroller}>
+          <div className={styles.inner}>
+            <div className={styles.months} style={{ gridTemplateColumns: `repeat(${columns}, var(--cell))` }}>
+              {monthLabels.map((m) => (
+                <span key={m.col} style={{ gridColumn: m.col + 1 }}>
+                  {m.label}
+                </span>
+              ))}
+            </div>
+            <div
+              className={styles.grid}
+              role="img"
+              aria-label="Mapa de calor de questões resolvidas nos últimos 12 meses"
+            >
+              {cells}
+            </div>
+          </div>
         </div>
+      </div>
+      <div className={styles.legend} aria-hidden="true">
+        <span>menos</span>
+        {[0, 1, 2, 3, 4].map((l) => (
+          <i key={l} className={styles.cell} data-level={l} />
+        ))}
+        <span>mais</span>
       </div>
     </div>
   )
