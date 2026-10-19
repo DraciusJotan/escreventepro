@@ -4,7 +4,13 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
-import ComingSoon from './pages/ComingSoon'
+import Practice from './pages/Practice'
+import Review from './pages/Review'
+import Questions from './pages/Questions'
+import QuestionForm from './pages/QuestionForm'
+import ImportQuestions from './pages/ImportQuestions'
+import Subjects from './pages/Subjects'
+import Stats from './pages/Stats'
 
 export default function App() {
   return (
@@ -16,10 +22,14 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route index element={<Dashboard />} />
-              <Route path="resolver" element={<ComingSoon title="Resolver questões" />} />
-              <Route path="revisao" element={<ComingSoon title="Revisão de hoje" />} />
-              <Route path="questoes" element={<ComingSoon title="Banco de questões" />} />
-              <Route path="desempenho" element={<ComingSoon title="Desempenho" />} />
+              <Route path="resolver" element={<Practice />} />
+              <Route path="revisao" element={<Review />} />
+              <Route path="questoes" element={<Questions />} />
+              <Route path="questoes/nova" element={<QuestionForm />} />
+              <Route path="questoes/importar" element={<ImportQuestions />} />
+              <Route path="questoes/:id" element={<QuestionForm />} />
+              <Route path="materias" element={<Subjects />} />
+              <Route path="desempenho" element={<Stats />} />
             </Route>
           </Route>
 
