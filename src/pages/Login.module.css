@@ -1,0 +1,45 @@
+.page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-5);
+}
+
+.brand {
+  margin: 0;
+  font-size: 1.6rem;
+  color: var(--primary);
+  text-align: center;
+}
+
+.subtitle {
+  margin: var(--space-1) 0 var(--space-5);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.switch {
+  margin-top: var(--space-4);
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--primary);
+  font: inherit;
+  cursor: pointer;
+  padding: var(--space-2);
+}

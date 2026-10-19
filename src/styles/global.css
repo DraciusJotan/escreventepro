@@ -1,0 +1,149 @@
+/* Design tokens: mude as cores aqui e o app inteiro acompanha. */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --border: #e2e5ea;
+  --text: #1c2230;
+  --text-muted: #5f6878;
+  --primary: #2453c7;
+  --primary-contrast: #ffffff;
+  --success: #1f8a4c;
+  --success-bg: #e5f5ec;
+  --danger: #c0392b;
+  --danger-bg: #fbe9e7;
+  --info-bg: #e8effd;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --nav-height: 64px;
+
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12151c;
+    --surface: #1b1f29;
+    --border: #2c3240;
+    --text: #e6e9ef;
+    --text-muted: #9aa3b2;
+    --primary: #6d9bff;
+    --primary-contrast: #0d1220;
+    --success: #4cc382;
+    --success-bg: #173826;
+    --danger: #ff7b6b;
+    --danger-bg: #3d1c19;
+    --info-bg: #1c2a47;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  font-size: 1rem; /* >= 16px evita o zoom automático do iPhone */
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  min-height: 44px; /* área de toque confortável */
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.alert {
+  margin: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+}
+
+.alert-error {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.alert-info {
+  background: var(--info-bg);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.center-screen {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+}
+
+.muted {
+  color: var(--text-muted);
+}
