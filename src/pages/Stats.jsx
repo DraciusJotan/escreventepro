@@ -22,15 +22,17 @@ export default function Stats() {
   return (
     <section>
       <header className="page-header">
-        <h1>Desempenho</h1>
+        <h1>
+          <span className="hl">Desempenho</span>
+        </h1>
       </header>
 
-      <div className="figures" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
-        <div>
+      <div className="tiles" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
+        <div className="tile" data-tone="teal">
           <p className="big-number">{totals.total ? `${percent(totals.correct, totals.total)}%` : '–'}</p>
           <span className="muted">de acerto geral</span>
         </div>
-        <div>
+        <div className="tile" data-tone="yellow">
           <p className="big-number">{totals.total}</p>
           <span className="muted">respostas</span>
         </div>

@@ -19,7 +19,9 @@ export default function Review() {
   return (
     <section>
       <div className="page-header">
-        <h1>Revisão de hoje</h1>
+        <h1>
+          <span className="hl">Revisão de hoje</span>
+        </h1>
       </div>
 
       {error && <p className="alert alert-error">{error}</p>}

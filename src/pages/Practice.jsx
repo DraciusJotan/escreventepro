@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import QuizRunner from '../components/QuizRunner'
 import { fetchRandomQuestions } from '../services/questions'
 import { listSubjects } from '../services/subjects'
+import { tagStyle } from '../lib/subjectColor'
 
 export default function Practice() {
   const [subjects, setSubjects] = useState([])
@@ -39,7 +40,9 @@ export default function Practice() {
     return (
       <section>
         <div className="page-header">
-          <h1>Resolver</h1>
+          <h1>
+          <span className="hl">Resolver</span>
+        </h1>
         </div>
         <QuizRunner
           questions={questions}
@@ -55,7 +58,9 @@ export default function Practice() {
   return (
     <section>
       <div className="page-header">
-        <h1>Resolver questões</h1>
+        <h1>
+          <span className="hl">Resolver questões</span>
+        </h1>
       </div>
 
       <form className="card stack" onSubmit={start}>
@@ -63,7 +68,7 @@ export default function Practice() {
           <legend className="section-title">Matérias (nenhuma marcada = todas)</legend>
           <div className="chips">
             {subjects.map((s) => (
-              <label key={s.id} className="chip" data-on={selected.includes(s.id)}>
+              <label key={s.id} className="chip" data-on={selected.includes(s.id)} style={tagStyle(s.name)}>
                 <input type="checkbox" checked={selected.includes(s.id)} onChange={() => toggle(s.id)} />
                 {s.name}
               </label>

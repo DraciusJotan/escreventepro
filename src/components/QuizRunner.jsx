@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { submitAnswer } from '../services/answers'
 import { LETTERS, optionOf } from '../services/questions'
 import { formatBR } from '../lib/dates'
+import { subjectColor } from '../lib/subjectColor'
 import styles from './QuizRunner.module.css'
 
 // Resolve uma lista de questões, uma por vez, com feedback imediato.
@@ -13,9 +14,10 @@ export default function QuizRunner({ questions, mode, onExit, exitLabel = 'Volta
   const [result, setResult] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [score, setScore] = useState({ correct: 0, total: 0 })
+  const [outcomes, setOutcomes] = useState([]) // true/false por questão respondida
 
   const question = questions[index]
+  const score = { correct: outcomes.filter(Boolean).length, total: outcomes.length }
 
   async function confirm() {
     if (!question || !selected || busy || result) return
@@ -24,7 +26,7 @@ export default function QuizRunner({ questions, mode, onExit, exitLabel = 'Volta
     try {
       const res = await submitAnswer(question.id, selected, mode)
       setResult(res)
-      setScore((s) => ({ correct: s.correct + (res.is_correct ? 1 : 0), total: s.total + 1 }))
+      setOutcomes((o) => [...o, res.is_correct])
     } catch (e) {
       setError(e.message)
     } finally {
@@ -59,10 +61,13 @@ export default function QuizRunner({ questions, mode, onExit, exitLabel = 'Volta
     const pct = score.total ? Math.round((score.correct / score.total) * 100) : 0
     return (
       <div className={styles.summary}>
-        <p className="eyebrow">Sessão concluída</p>
+        <p className="eyebrow">sessão concluída</p>
         <p className={styles.summaryPct}>{pct}%</p>
-        <p className="muted">
+        <p className={styles.summaryText}>
           {score.correct} de {score.total} {score.total === 1 ? 'questão correta' : 'questões corretas'}
+        </p>
+        <p className={styles.verdict}>
+          {pct >= 80 ? 'Mandou bem!' : pct >= 60 ? 'Bom caminho, siga firme.' : 'Os erros voltam na revisão. Sem pressa.'}
         </p>
         <button type="button" className="btn btn-primary" onClick={onExit}>
           {exitLabel}
@@ -80,27 +85,52 @@ export default function QuizRunner({ questions, mode, onExit, exitLabel = 'Volta
 
   const isLast = index === questions.length - 1
   const subject = subjectNames[question.subject_id]
+  const manySegments = questions.length > 30
 
   return (
     <div className={styles.quiz}>
       <div className={styles.progress}>
         <div className={styles.progressText}>
-          <span>
-            Questão <strong>{index + 1}</strong> de {questions.length}
+          <span className={styles.folha}>
+            fls. {index + 1}/{questions.length}
           </span>
           <span className="muted">
-            {score.correct}/{score.total} certas
+            {score.correct} {score.correct === 1 ? 'certa' : 'certas'} · {score.total - score.correct}{' '}
+            {score.total - score.correct === 1 ? 'errada' : 'erradas'}
           </span>
         </div>
-        <div className={styles.track}>
-          <div className={styles.bar} style={{ width: `${(index / questions.length) * 100}%` }} />
-        </div>
+        {manySegments ? (
+          <div className={styles.track}>
+            <div className={styles.bar} style={{ width: `${(index / questions.length) * 100}%` }} />
+          </div>
+        ) : (
+          <div className={styles.segments} aria-hidden="true">
+            {questions.map((q, i) => (
+              <i
+                key={q.id}
+                data-state={i < outcomes.length ? (outcomes[i] ? 'ok' : 'no') : i === index ? 'now' : 'todo'}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      <article className={styles.paper}>
+      <article className={styles.sheet}>
+        {result && (
+          <div className={styles.stamp} data-ok={result.is_correct} aria-hidden="true">
+            {result.is_correct ? 'Certo' : 'Errado'}
+          </div>
+        )}
+
         <p className={styles.meta}>
-          {[subject, question.topic, question.source].filter(Boolean).join('  ·  ')}
+          {subject && (
+            <span className="badge" style={{ '--tag': subjectColor(subject) }}>
+              {subject}
+            </span>
+          )}
+          {[question.topic, question.source].filter(Boolean).join('  ·  ')}
         </p>
+
         <p className={styles.statement}>{question.statement}</p>
 
         <div className={styles.options} role="radiogroup" aria-label="Alternativas">
@@ -123,7 +153,9 @@ export default function QuizRunner({ questions, mode, onExit, exitLabel = 'Volta
 
         {result && (
           <div className={styles.feedback} data-ok={result.is_correct} role="status">
-            <strong>{result.is_correct ? 'Resposta correta.' : `Resposta incorreta. Gabarito: ${result.correct_option}.`}</strong>
+            <strong>
+              {result.is_correct ? 'Resposta correta.' : `Gabarito: ${result.correct_option}.`}
+            </strong>
             {result.next_due && (
               <span>
                 {result.is_correct ? 'Próxima revisão' : 'Volta para revisão'} em {formatBR(result.next_due)}.
@@ -148,7 +180,7 @@ export default function QuizRunner({ questions, mode, onExit, exitLabel = 'Volta
           </button>
         )}
       </div>
-      <p className={styles.hint}>Atalhos: teclas A–E escolhem, Enter confirma.</p>
+      <p className={styles.hint}>dica: teclas A–E escolhem, Enter confirma</p>
     </div>
   )
 }

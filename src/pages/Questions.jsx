@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { deleteQuestion, listQuestions } from '../services/questions'
 import { listSubjects } from '../services/subjects'
+import { tagStyle } from '../lib/subjectColor'
 
 export default function Questions() {
   const [subjects, setSubjects] = useState([])
@@ -58,7 +59,9 @@ export default function Questions() {
   return (
     <section>
       <div className="page-header">
-        <h1>Banco de questões</h1>
+        <h1>
+          <span className="hl">Banco de questões</span>
+        </h1>
         <div className="actions">
           <Link className="btn btn-primary" to="/questoes/nova">
             + Nova
@@ -106,7 +109,7 @@ export default function Questions() {
 
       <ul className="list">
         {rows.map((q) => (
-          <li key={q.id} className="card stack">
+          <li key={q.id} className="stack" style={tagStyle(q.subjects?.name)}>
             <div className="row">
               <span className="badge">{q.subjects?.name}</span>
               {q.topic && <span className="muted">{q.topic}</span>}

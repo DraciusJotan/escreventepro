@@ -7,6 +7,7 @@ import {
   renameSubject,
   subjectErrorMessage,
 } from '../services/subjects'
+import { tagStyle } from '../lib/subjectColor'
 
 export default function Subjects() {
   const [subjects, setSubjects] = useState(null)
@@ -62,7 +63,9 @@ export default function Subjects() {
   return (
     <section>
       <div className="page-header">
-        <h1>Matérias</h1>
+        <h1>
+          <span className="hl">Matérias</span>
+        </h1>
         <Link className="btn" to="/questoes">
           ← Questões
         </Link>
@@ -86,7 +89,7 @@ export default function Subjects() {
 
       <ul className="list">
         {subjects?.map((s) => (
-          <li key={s.id} className="card row">
+          <li key={s.id} className="row" style={tagStyle(s.name)}>
             {editingId === s.id ? (
               <>
                 <input

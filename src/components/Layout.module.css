@@ -3,11 +3,24 @@
 }
 
 .brand {
-  font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: 1.2rem;
-  letter-spacing: -0.01em;
-  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-variation-settings: 'SOFT' 100, 'WONK' 1;
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: -0.015em;
+  color: #fff;
+}
+
+.brand em {
+  font-style: normal;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: #ffe15a;
+  color: #14193a;
+  margin-left: -4px;
 }
 
 /* ---------- Celular ---------- */
@@ -19,20 +32,19 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-2) var(--space-4);
-  min-height: 52px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  min-height: 56px;
+  background: var(--ink-bg);
 }
 
 .iconButton {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border: 0;
   border-radius: var(--radius);
-  background: none;
-  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
   cursor: pointer;
 }
 
@@ -40,9 +52,9 @@
   position: fixed;
   inset: auto 0 0 0;
   z-index: 10;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
+  background: var(--ink-bg);
   padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -6px 18px -10px rgba(10, 14, 60, 0.6);
 }
 
 .sidebarBrand,
@@ -53,6 +65,7 @@
 .nav {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  padding: 4px var(--space-2) 0;
 }
 
 .link {
@@ -63,24 +76,24 @@
   justify-content: center;
   gap: 2px;
   min-height: var(--nav-height);
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ink-text);
   text-decoration: none;
 }
 
 .link.active {
-  color: var(--primary);
+  color: var(--hl-bar, #ffe15a);
 }
 
-.link.active::before {
+.link.active::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 25%;
-  right: 25%;
-  height: 2px;
-  background: var(--primary);
+  bottom: 6px;
+  width: 22px;
+  height: 4px;
+  border-radius: 2px;
+  background: #ffe15a;
 }
 
 .iconWrap {
@@ -90,13 +103,13 @@
 
 .dot {
   position: absolute;
-  top: -2px;
-  right: -4px;
-  width: 8px;
-  height: 8px;
+  top: -3px;
+  right: -5px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: var(--accent);
-  border: 2px solid var(--surface);
+  background: #ff5d73;
+  border: 2px solid var(--ink-bg);
   box-sizing: content-box;
 }
 
@@ -106,7 +119,7 @@
 
 .main {
   width: 100%;
-  max-width: 880px;
+  max-width: 900px;
   margin: 0 auto;
   padding: var(--space-5) var(--space-4);
   padding-bottom: calc(var(--nav-height) + var(--space-6));
@@ -116,7 +129,7 @@
 @media (min-width: 900px) {
   .shell {
     display: grid;
-    grid-template-columns: 248px minmax(0, 1fr);
+    grid-template-columns: 264px minmax(0, 1fr);
   }
 
   .topbar {
@@ -131,59 +144,64 @@
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    padding: var(--space-5) var(--space-3);
-    border-top: 0;
-    border-right: 1px solid var(--border);
+    padding: var(--space-5) var(--space-4);
+    box-shadow: none;
+    /* pauta sutil na barra lateral */
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 31px,
+      rgba(255, 255, 255, 0.05) 31px 32px
+    );
+    background-color: var(--ink-bg);
   }
 
   .sidebarBrand {
     display: flex;
     flex-direction: column;
-    padding: 0 var(--space-3) var(--space-5);
-    border-bottom: 1px solid var(--border);
+    gap: 4px;
+    padding: 0 var(--space-2) var(--space-5);
   }
 
   .tagline {
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
+    padding-left: 46px;
+    font-family: var(--font-hand);
+    font-size: 1.15rem;
+    line-height: 1;
+    color: var(--ink-text);
   }
 
   .nav {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    margin-top: var(--space-4);
+    gap: 4px;
+    margin-top: var(--space-2);
+    padding: 0;
   }
 
   .link {
     flex-direction: row;
     justify-content: flex-start;
     gap: var(--space-3);
-    min-height: 40px;
+    min-height: 46px;
     padding: 0 var(--space-3);
     border-radius: var(--radius);
-    font-size: 0.95rem;
+    font-size: 1rem;
+    transition: background-color 0.12s;
   }
 
   .link:hover {
-    background: var(--info-bg);
+    background: rgba(255, 255, 255, 0.1);
   }
 
+  /* item ativo: marcado com marca-texto */
   .link.active {
-    background: var(--info-bg);
-    color: var(--text);
+    background: #ffe15a;
+    color: #14193a;
+    transform: rotate(-0.6deg);
   }
 
-  .link.active::before {
-    top: 8px;
-    bottom: 8px;
-    left: 0;
-    right: auto;
-    width: 3px;
-    height: auto;
-    border-radius: 2px;
+  .link.active::after {
+    display: none;
   }
 
   .dot {
@@ -193,15 +211,15 @@
   .count {
     display: inline-block;
     margin-left: auto;
-    min-width: 22px;
-    padding: 0 6px;
-    border-radius: 11px;
-    background: var(--accent);
+    min-width: 24px;
+    padding: 0 7px;
+    border-radius: 12px;
+    background: #ff5d73;
     color: #fff;
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 700;
     text-align: center;
-    line-height: 22px;
+    line-height: 24px;
   }
 
   .account {
@@ -209,13 +227,13 @@
     flex-direction: column;
     gap: var(--space-2);
     margin-top: auto;
-    padding: var(--space-4) var(--space-3) 0;
-    border-top: 1px solid var(--border);
+    padding: var(--space-4) var(--space-2) 0;
+    border-top: 2px dashed rgba(255, 255, 255, 0.2);
   }
 
   .email {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+    font-size: 0.82rem;
+    color: var(--ink-text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -230,8 +248,8 @@
     border: 0;
     background: none;
     font: inherit;
-    font-size: 0.9rem;
-    color: var(--text);
+    font-weight: 700;
+    color: #fff;
     cursor: pointer;
   }
 

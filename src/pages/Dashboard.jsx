@@ -27,6 +27,7 @@ const dateLabel = new Intl.DateTimeFormat('pt-BR', {
   month: 'long',
   timeZone: 'America/Sao_Paulo',
 }).format(new Date())
+const dateText = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1)
 
 export default function Dashboard() {
   const [data, setData] = useState(null)
@@ -46,6 +47,7 @@ export default function Dashboard() {
   const { activity, due, stats } = data
   const todayCount = activity.find((a) => a.day === todayISO())?.total ?? 0
   const yearTotal = activity.reduce((sum, a) => sum + a.total, 0)
+  const streak = currentStreak(activity)
   const totals = stats.reduce((t, s) => ({ total: t.total + s.total, correct: t.correct + s.correct }), {
     total: 0,
     correct: 0,
@@ -56,22 +58,29 @@ export default function Dashboard() {
     <section>
       <header className="page-header">
         <div>
-          <p className="eyebrow">{dateLabel}</p>
-          <h1>Hoje</h1>
+          <p className="eyebrow">{dateText}</p>
+          <h1>
+            <span className="hl">Hoje</span>
+          </h1>
         </div>
       </header>
 
-      <div className={styles.review} data-pending={due > 0}>
+      <div className={`postit ${styles.review}`}>
         <div>
+          <p className={styles.hand}>{due > 0 ? 'na pauta de hoje:' : 'pauta de hoje:'}</p>
           <p className={styles.reviewTitle}>
-            {due > 0
-              ? `${due} ${due === 1 ? 'questão pendente' : 'questões pendentes'} na revisão`
-              : 'Revisão em dia'}
+            {due > 0 ? (
+              <>
+                <b>{due}</b> {due === 1 ? 'questão para revisar' : 'questões para revisar'}
+              </>
+            ) : (
+              'Revisão em dia!'
+            )}
           </p>
-          <p className="muted" style={{ margin: 0 }}>
+          <p className={styles.reviewText}>
             {due > 0
-              ? 'São questões que você errou e que vencem hoje ou antes.'
-              : 'Nada vence hoje. Aproveite para resolver questões novas.'}
+              ? 'Questões que você errou e que vencem hoje ou antes.'
+              : 'Nada vence hoje. Que tal resolver questões novas?'}
           </p>
         </div>
         <Link className="btn btn-primary" to={due > 0 ? '/revisao' : '/resolver'}>
@@ -79,16 +88,16 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      <div className="figures">
-        <div>
+      <div className="tiles">
+        <div className="tile" data-tone="yellow">
           <p className="big-number">{todayCount}</p>
-          <span className="muted">questões hoje</span>
+          <span className="muted">{todayCount === 1 ? 'questão hoje' : 'questões hoje'}</span>
         </div>
-        <div>
-          <p className="big-number">{currentStreak(activity)}</p>
-          <span className="muted">dias seguidos</span>
+        <div className="tile" data-tone="pink">
+          <p className="big-number">{streak}</p>
+          <span className="muted">{streak === 1 ? 'dia seguido' : 'dias seguidos'}</span>
         </div>
-        <div>
+        <div className="tile" data-tone="teal">
           <p className="big-number">{totals.total ? `${percent(totals.correct, totals.total)}%` : '–'}</p>
           <span className="muted">de acerto</span>
         </div>

@@ -96,7 +96,9 @@ export default function QuestionForm() {
   return (
     <section>
       <div className="page-header">
-        <h1>{id ? 'Editar questão' : 'Nova questão'}</h1>
+        <h1>
+          <span className="hl">{id ? 'Editar questão' : 'Nova questão'}</span>
+        </h1>
         <Link className="btn" to="/questoes">
           ← Voltar
         </Link>

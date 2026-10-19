@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
+import Logo from '../components/Logo'
 import styles from './Login.module.css'
 
 const ERROR_MESSAGES = {
@@ -51,22 +52,34 @@ export default function Login() {
   return (
     <main className={styles.page}>
       <aside className={styles.side}>
-        <span className={styles.brand}>Escrevente Pro</span>
-        <div>
-          <p className={styles.lead}>Constância vence talento na hora da prova.</p>
+        <span className={styles.brand}>
+          <Logo size={40} />
+          Escrevente <em>Pro</em>
+        </span>
+
+        <div className={styles.pitch}>
+          <p className={styles.lead}>
+            <span className={styles.mark}>Constância</span> vence talento na hora da prova.
+          </p>
           <ul className={styles.points}>
-            <li>Banco de questões próprio, organizado por matéria e assunto</li>
-            <li>Revisão espaçada: o que você erra volta no dia certo</li>
-            <li>Mapa de estudo para enxergar sua sequência</li>
+            <li>Suas questões, organizadas por matéria e assunto</li>
+            <li>O que você erra volta no dia certo para revisar</li>
+            <li>Um mapa de estudo para não quebrar a sequência</li>
           </ul>
         </div>
-        <span className={styles.footnote}>Escrevente Técnico Judiciário · TJSP · VUNESP</span>
+
+        <span className={styles.note}>bons estudos! ✎</span>
       </aside>
 
       <section className={styles.formSide}>
         <div className={styles.formWrap}>
-          <span className={`${styles.brand} ${styles.mobileBrand}`}>Escrevente Pro</span>
-          <h1 className={styles.title}>{isLogin ? 'Entrar' : 'Criar conta'}</h1>
+          <span className={`${styles.brand} ${styles.mobileBrand}`}>
+            <Logo size={36} />
+            Escrevente <em>Pro</em>
+          </span>
+          <h1 className={styles.title}>
+            <span className="hl">{isLogin ? 'Entrar' : 'Criar conta'}</span>
+          </h1>
           <p className={styles.subtitle}>
             {isLogin ? 'Continue de onde parou.' : 'Leva menos de um minuto.'}
           </p>

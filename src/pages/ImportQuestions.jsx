@@ -48,7 +48,9 @@ export default function ImportQuestions() {
   return (
     <section>
       <div className="page-header">
-        <h1>Importar questões</h1>
+        <h1>
+          <span className="hl">Importar questões</span>
+        </h1>
         <Link className="btn" to="/questoes">
           ← Voltar
         </Link>

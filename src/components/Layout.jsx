@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
 import { countDueReviews } from '../services/answers'
 import Icon from './Icon'
+import Logo from './Logo'
 import styles from './Layout.module.css'
 
 const NAV_ITEMS = [
@@ -28,7 +29,10 @@ export default function Layout() {
   return (
     <div className={styles.shell}>
       <header className={styles.topbar}>
-        <span className={styles.brand}>Escrevente Pro</span>
+        <span className={styles.brand}>
+          <Logo size={30} />
+          Escrevente <em>Pro</em>
+        </span>
         <button type="button" className={styles.iconButton} onClick={signOut} aria-label="Sair">
           <Icon name="logout" />
         </button>
@@ -36,8 +40,11 @@ export default function Layout() {
 
       <aside className={styles.sidebar}>
         <div className={styles.sidebarBrand}>
-          <span className={styles.brand}>Escrevente Pro</span>
-          <span className={styles.tagline}>TJSP · VUNESP</span>
+          <span className={styles.brand}>
+            <Logo size={36} />
+            Escrevente <em>Pro</em>
+          </span>
+          <span className={styles.tagline}>concurso TJSP · VUNESP</span>
         </div>
 
         <nav className={styles.nav} aria-label="Principal">
