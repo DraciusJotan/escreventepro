@@ -7,10 +7,37 @@ const OPTION = /^\(?([A-E])\)\s*(.*)$/
 // "Leia o texto para responder às questões de números 01 a 05."
 const PASSAGE_RANGE = /quest(?:ões|oes|ão|ao)\s+(?:de\s+)?(?:n[úu]meros?\s+)?(\d{1,3})\s*(?:a|à|até|e|-|–)\s*(\d{1,3})/i
 
-const join = (current, line) => {
+// Palavras inteiras do próprio PDF (tokens que não estão nas pontas das linhas).
+// Servem para religar "obri" + "gatório" quando o PDF perdeu o hífen de fim de linha.
+function buildVocab(lines) {
+  const vocab = new Set()
+  const add = (t) => {
+    const w = t.toLowerCase().replace(/^[^\p{L}]+|[^\p{L}]+$/gu, '')
+    if (w.length >= 3 && /^\p{L}+$/u.test(w)) vocab.add(w)
+  }
+  for (const l of lines) {
+    const tokens = l.split(/\s+/)
+    tokens.slice(1, -1).forEach(add)
+    // pontas de linha só entram quando há pontuação colada: aí a palavra está inteira
+    if (/[.,;:?!)”"]$/.test(l)) add(tokens.at(-1))
+    if (/^[“"(]/.test(l)) add(tokens[0])
+  }
+  return vocab
+}
+
+const join = (current, line, vocab) => {
   if (!current) return line
   // "pala-" + "vra" -> "palavra" (hifenização de fim de linha)
-  if (/[a-zà-ú]-$/i.test(current) && /^[a-zà-ú]/.test(line)) return current.slice(0, -1) + line
+  if (/[a-zà-ú]\s?-$/i.test(current) && /^[a-zà-ú]/.test(line)) return current.replace(/\s?-$/, '') + line
+  // hífen perdido no PDF: "obri" + "gatório" -> "obrigatório" (só se a palavra inteira existe no texto)
+  const last = current.match(/(\p{L}+)$/u)?.[1]
+  const first = line.match(/^(\p{L}+)/u)?.[1]
+  if (vocab && last && first) {
+    const whole = (last + first).toLowerCase()
+    if (vocab.has(whole) && !vocab.has(last.toLowerCase())) {
+      return current + line
+    }
+  }
   return `${current} ${line}`
 }
 
@@ -18,6 +45,7 @@ export function parseProva(lines, { start = 1 } = {}) {
   const questions = []
   const passages = [] // { from, to, text }
   let expected = start
+  const seen = new Set()
   let current = null // questão em montagem
   let part = null // 'statement' ou letra da alternativa
   let passage = null // texto-base em montagem
@@ -28,6 +56,7 @@ export function parseProva(lines, { start = 1 } = {}) {
   }
 
   const clean = lines.map((l) => l.trim()).filter(Boolean)
+  const vocab = buildVocab(clean)
   const PASSAGE_CUE = /\b(leia|considere|observe|analise|texto)\b/i
 
   for (let i = 0; i < clean.length; i++) {
@@ -39,14 +68,20 @@ export function parseProva(lines, { start = 1 } = {}) {
     const numbered = !header && line.match(QUESTION_NUMBERED)
     if (header) [, n, rest] = header
     else if (numbered) [, n, rest] = numbered
+    // "001. PROVA OBJETIVA" (título da capa) não é a questão 1
+    if (n !== null && n.length === 3 && n.startsWith('0')) n = null
     n = n === null ? null : Number(n)
 
-    if (n === expected) {
+    // Aceita o próximo número esperado ou um número ainda não visto logo à frente/atrás:
+    // em PDFs de duas colunas a ordem de leitura às vezes troca questões vizinhas (42 antes de 41).
+    const isNew = n !== null && n >= start && !seen.has(n) && n <= expected + 2
+    if (isNew) {
       closePassage()
-      current = { n, statement: rest, options: {}, }
+      current = { n, statement: rest, options: {} }
       questions.push(current)
+      seen.add(n)
       part = 'statement'
-      expected++
+      if (n >= expected) expected = n + 1
       continue
     }
 
@@ -69,7 +104,7 @@ export function parseProva(lines, { start = 1 } = {}) {
     }
 
     if (passage) {
-      passage.text = join(passage.text, line)
+      passage.text = join(passage.text, line, vocab)
       continue
     }
     if (!current) continue
@@ -85,9 +120,9 @@ export function parseProva(lines, { start = 1 } = {}) {
       part = opt[1]
       current.options[part] = opt[2]
     } else if (part === 'statement') {
-      current.statement = join(current.statement, line)
+      current.statement = join(current.statement, line, vocab)
     } else if (part) {
-      current.options[part] = join(current.options[part], line)
+      current.options[part] = join(current.options[part], line, vocab)
     }
   }
   closePassage()

@@ -6,26 +6,30 @@
 //        --fonte "VUNESP · TJSP 2023" --out prova.csv
 //
 // Opções:
-//   --gabarito   arquivo .txt com o gabarito ("1-A 2-B ..." ou só as letras em sequência) ou a própria string
+//   --gabarito   PDF ou .txt com o gabarito ("1-A 2-B ..." ou só as letras em sequência) ou a própria string
 //   --blocos     faixa de questões => matéria (nomes iguais aos das suas matérias no app)
 //   --materia    use no lugar de --blocos quando a prova inteira é de uma matéria
+//   --versao     quando o gabarito traz várias versões do caderno, qual delas usar (1, 2...)
+//   --manter-figuras  não descarta questões que dependem de figura/gráfico/tabela
 //   --fonte      texto da coluna "fonte"
 //   --colunas    1, 2 ou auto (padrão): colunas de texto do PDF
 //   --inicio     número da primeira questão (padrão 1)
+//   --texto      grava o texto extraído do PDF num .txt, para inspeção
 //   --out        arquivo de saída (padrão: <prova>.csv)
 //
 // Questões incompletas (sem as 5 alternativas, sem gabarito, anuladas ou com figura)
 // não entram no CSV: ficam listadas no relatório para você cadastrar à mão.
 import fs from 'node:fs'
 import path from 'node:path'
-import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs'
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs"
 import { TEMPLATE_COLUMNS } from '../src/lib/importQuestions.js'
 import { parseBlocks, parseGabarito, parseProva } from './lib/provaParser.mjs'
 
 function parseArgs(argv) {
   const args = { _: [] }
   for (let i = 0; i < argv.length; i++) {
-    if (argv[i].startsWith('--')) args[argv[i].slice(2)] = argv[++i]
+    if (argv[i] === '--manter-figuras') args['manter-figuras'] = true
+    else if (argv[i].startsWith('--')) args[argv[i].slice(2)] = argv[++i]
     else args._.push(argv[i])
   }
   return args
@@ -42,6 +46,8 @@ async function extractLines(file, columnsMode) {
     const { items } = await page.getTextContent()
     const words = items
       .filter((it) => it.str.trim())
+      // texto girado (marca d'água "RASCUNHO", legendas laterais) não faz parte da questão
+      .filter((it) => Math.abs(it.transform[1]) < 0.01 && Math.abs(it.transform[2]) < 0.01)
       .map((it) => ({ text: it.str, x: it.transform[4], y: it.transform[5] }))
 
     // agrupa palavras em linhas (mesma altura, com tolerância)
@@ -81,15 +87,41 @@ async function extractLines(file, columnsMode) {
     pages.push(lines.map((l) => l.text))
   }
 
-  // remove cabeçalhos/rodapés: linhas que se repetem em metade ou mais das páginas
+  // remove cabeçalhos/rodapés: linhas repetidas em metade ou mais das páginas,
+  // o código do caderno ("tjsp1701/001-Escrevente...") e números de página soltos
+  const keep = (t) => !/tjsp\d{4}\s*\/\s*\d{3}/i.test(t) && !/^\d{1,3}$/.test(t) && !/^página\s+\d+/i.test(t)
   if (pages.length > 2) {
     const freq = new Map()
     for (const page of pages) for (const t of new Set(page)) freq.set(t, (freq.get(t) ?? 0) + 1)
     const noise = new Set([...freq].filter(([, c]) => c >= pages.length * 0.5).map(([t]) => t))
-    return pages.flatMap((page) => page.filter((t) => !noise.has(t) && !/^\d{1,3}$/.test(t) && !/^página\s+\d+/i.test(t)))
+    return pages.flatMap((page) => page.filter((t) => !noise.has(t) && keep(t)))
   }
-  return pages.flat()
+  return pages.flat().filter(keep)
 }
+
+async function extractPlainText(file) {
+  const pdf = await getDocument({ data: new Uint8Array(fs.readFileSync(file)), useSystemFonts: true, verbosity: 0 }).promise
+  let text = ''
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const { items } = await (await pdf.getPage(p)).getTextContent()
+    text += items.map((i) => i.str).join(' ') + ' '
+  }
+  return text.replace(/\s+/g, ' ')
+}
+
+function pickVersion(text, version) {
+  const parts = text.split(/vers[ãa]o\s*(\d)/i) // [antes, "1", texto1, "2", texto2 ...]
+  const i = parts.indexOf(String(version))
+  if (i === -1) throw new Error(`Versão ${version} não encontrada no gabarito.`)
+  return parts[i + 1]
+}
+
+// Questões cujo enunciado depende de imagem/gráfico/tabela: o PDF só entrega o texto, então ficariam sem sentido.
+const VISUAL = /\b(charge|tira|quadrinhos?|gráficos?|diagramas?|ilustra[çc][ãa]o|malha|imagens?|cartaz|tabelas?|figuras?(?!\s+de\s+(linguagem|palavra|ret[óo]rica))|planilha a seguir|quadro a seguir|observe)\b/i
+
+// Letras soltas da caixa "RASCUNHO" que o PDF mistura ao texto, e espaços repetidos.
+const RASCUNHO = /\bR A S(?: [Cc](?: [Uu](?: [Nn](?: [Hh](?: [Oo])?)?)?)?)?(?=\s|$)/g
+const tidy = (v) => v.replace(RASCUNHO, ' ').replace(/[ \t]+/g, ' ').replace(/ ?\n ?/g, '\n').trim()
 
 const esc = (v) => (/[;"\n\r]/.test(v) ? `"${String(v).replaceAll('"', '""')}"` : v)
 
@@ -102,10 +134,15 @@ async function main() {
   }
 
   const subjectOf = args.blocos ? parseBlocks(args.blocos) : () => args.materia
-  const gabText = fs.existsSync(args.gabarito) ? fs.readFileSync(args.gabarito, 'utf8') : args.gabarito
+  let gabText = args.gabarito
+  if (/\.pdf$/i.test(args.gabarito)) gabText = await extractPlainText(args.gabarito)
+  else if (fs.existsSync(args.gabarito)) gabText = fs.readFileSync(args.gabarito, 'utf8')
+  // Gabaritos com várias versões do caderno ("Versão 1 ... Versão 2 ..."): escolhe a da sua prova.
+  if (args.versao) gabText = pickVersion(gabText, args.versao)
   const gabarito = parseGabarito(gabText)
 
   const lines = await extractLines(pdfFile, args.colunas ?? 'auto')
+  if (args.texto) fs.writeFileSync(args.texto, lines.join('\n'), 'utf8')
   const questions = parseProva(lines, { start: Number(args.inicio ?? 1) })
 
   const rows = []
@@ -114,10 +151,15 @@ async function main() {
     const letters = Object.keys(q.options)
     const answer = gabarito.get(q.n)
     const subject = subjectOf(q.n)
-    if (letters.length !== 5) skipped.push(`${q.n}: só ${letters.length} alternativas detectadas (figura ou layout diferente)`)
+    q.statement = tidy(q.statement)
+    for (const l of letters) q.options[l] = tidy(q.options[l])
+    if (letters.length === 5 && letters.some((l) => !q.options[l])) skipped.push(`${q.n}: alternativa vazia (provavelmente é uma figura)`)
+    else if (letters.length !== 5) skipped.push(`${q.n}: só ${letters.length} alternativas detectadas (figura ou layout diferente)`)
     else if (!answer || !'ABCDE'.includes(answer)) skipped.push(`${q.n}: sem gabarito válido (${answer ?? 'ausente'}; anulada?)`)
     else if (!subject) skipped.push(`${q.n}: nenhuma matéria definida para este número em --blocos`)
-    else {
+    else if (!args['manter-figuras'] && VISUAL.test(q.statement)) {
+      skipped.push(`${q.n}: depende de figura/gráfico/tabela (conteúdo visual não vem no texto do PDF)`)
+    } else {
       rows.push([subject, '', q.statement, q.options.A, q.options.B, q.options.C, q.options.D, q.options.E, answer, args.fonte ?? ''])
     }
   }
