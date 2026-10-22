@@ -20,7 +20,7 @@ App web (mobile-first) para estudar para o concurso de **Escrevente Técnico Jud
 | Frontend | React 19, Vite, React Router, CSS Modules (JavaScript), fontes IBM Plex Sans e Source Serif 4 |
 | Backend | Supabase: Auth, Postgres, Row Level Security, funções SQL (RPC) |
 | Planilhas | SheetJS (carregado sob demanda só na tela de importação) |
-| Deploy | Vercel |
+| Deploy | GitHub Pages (GitHub Actions) |
 | IA (fase 2) | API do Claude via Supabase Edge Functions |
 
 ## Decisões de arquitetura
@@ -87,14 +87,19 @@ Não existe dataset aberto da VUNESP. A ferramenta `scripts/pdf-to-csv.mjs` conv
 
 Baixe o modelo na tela **Questões → Importar**. Colunas: `materia`, `assunto`, `enunciado`, `alternativa_a` … `alternativa_e`, `gabarito` (A–E), `fonte`. O nome da matéria deve ser igual ao de uma das suas matérias (maiúsculas e acentos não importam). Aceita CSV separado por vírgula ou ponto e vírgula (padrão do Excel brasileiro).
 
-## Deploy (Vercel)
+## Deploy (GitHub Pages)
 
-1. Suba o projeto para um repositório no GitHub.
-2. Na Vercel, **Add New → Project**, importe o repositório (preset Vite é detectado).
-3. Em **Environment Variables**, cadastre `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`.
-4. No Supabase, em **Authentication → URL Configuration**, adicione a URL da Vercel em *Site URL* e *Redirect URLs*.
+O repositório já traz o workflow `.github/workflows/deploy.yml`: a cada push na `main` ele roda o build e publica o site.
 
-O arquivo `vercel.json` faz todas as rotas caírem no `index.html`, necessário para o React Router.
+1. Crie o repositório no GitHub (público, para o Pages gratuito) e faça o push.
+2. Em **Settings → Pages → Build and deployment**, escolha **Source: GitHub Actions**.
+3. Em **Settings → Secrets and variables → Actions → New repository secret**, cadastre:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY` (chave publishable/anon; a `service_role`/`secret` **nunca** entra aqui)
+4. No Supabase, em **Authentication → URL Configuration**, defina *Site URL* e adicione em *Redirect URLs* o endereço do site: `https://USUARIO.github.io/NOME-DO-REPOSITORIO/`.
+5. Faça um push (ou rode o workflow em **Actions → Deploy no GitHub Pages → Run workflow**). O endereço aparece no fim da execução.
+
+Detalhes técnicos: o site fica numa subpasta (`/NOME-DO-REPOSITORIO/`), então o Vite usa `base` (variável `VITE_BASE`) e o React Router usa `basename`. O Pages não conhece as rotas do app, então o build copia `index.html` para `404.html` (`scripts/spa-fallback.mjs`) e o React Router assume a rota. Em hospedagens na raiz (como a Vercel, que usa o `vercel.json`) o padrão `/` já funciona.
 
 ## Segurança
 

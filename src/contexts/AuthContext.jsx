@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
       supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: window.location.origin },
+        options: { emailRedirectTo: window.location.origin + import.meta.env.BASE_URL },
       }),
     signOut: () => supabase.auth.signOut(),
   }

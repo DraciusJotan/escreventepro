@@ -62,10 +62,10 @@ export default function ImportQuestions() {
           <strong>.csv</strong>.
         </p>
         <div className="actions">
-          <a className="btn" href="/modelo-questoes.xlsx" download>
+          <a className="btn" href={`${import.meta.env.BASE_URL}modelo-questoes.xlsx`} download>
             Baixar modelo (.xlsx)
           </a>
-          <a className="btn" href="/modelo-questoes.csv" download>
+          <a className="btn" href={`${import.meta.env.BASE_URL}modelo-questoes.csv`} download>
             Baixar modelo (.csv)
           </a>
         </div>
