@@ -65,3 +65,35 @@ export async function fetchRandomQuestions(subjectIds, limit) {
   if (error) throw error
   return data
 }
+
+// Caderno de erros: questões cuja última resposta foi errada (função wrong_questions).
+export async function fetchWrongQuestions(subjectIds = [], limit = 200) {
+  const { data, error } = await supabase.rpc('wrong_questions', {
+    p_subject_ids: subjectIds,
+    p_limit: limit,
+  })
+  if (error) throw error
+  return data
+}
+
+export async function countWrongQuestions() {
+  const { count, error } = await supabase.rpc('wrong_questions', { p_limit: 500 }, { count: 'exact', head: true })
+  if (error) throw error
+  return count ?? 0
+}
+
+export async function getQuestionsByIds(ids) {
+  if (!ids.length) return []
+  const { data, error } = await supabase.from('questions').select('*').in('id', ids)
+  if (error) throw error
+  return data
+}
+
+// Mensagem amigável quando a migration 0002 ainda não foi rodada no Supabase.
+export function isMissingSchema(error) {
+  const text = `${error?.code ?? ''} ${error?.message ?? ''}`
+  return /42P01|PGRST205|PGRST202|42883|does not exist|Could not find/i.test(text)
+}
+
+export const MIGRATION_HINT =
+  'Falta rodar a migration 0002 no Supabase (SQL Editor → supabase/migrations/0002_simulados_caderno_metas.sql).'

@@ -12,6 +12,10 @@ App web (mobile-first) para estudar para o concurso de **Escrevente Técnico Jud
 - **Revisão espaçada** (SM-2 simplificado): questões erradas voltam nos dias seguintes. Tela "Revisão de hoje".
 - **Mapa de calor** anual de questões resolvidas por dia (estilo GitHub) e sequência de dias.
 - **Painel de desempenho**: % de acerto geral e por matéria, com as mais fracas em destaque.
+- **Simulados cronometrados**: marque as respostas, veja a nota só no fim, com resultado por matéria e histórico.
+- **Caderno de erros**: questões cuja última resposta foi errada; acertou de novo, sai do caderno.
+- **Cronograma**: meta semanal de questões e progresso das últimas semanas.
+- **Navegação de questões** com Anterior/Próxima e grade de gabarito por blocos; tema escuro (padrão), claro ou automático.
 
 ## Stack
 
@@ -55,7 +59,7 @@ cp .env.example .env.local   # no Windows (PowerShell): copy .env.example .env.l
 
 1. Crie um projeto no Supabase (região South America – São Paulo).
 2. Preencha o `.env.local` com a **Project URL** e a chave **anon/publishable** (Project Settings → API). Nunca use a chave `service_role`/`secret` no frontend.
-3. No painel do Supabase, abra **SQL Editor → New query**, cole o conteúdo de [`supabase/migrations/0001_schema.sql`](supabase/migrations/0001_schema.sql) e clique em **Run**. Isso cria tabelas, RLS, funções e o gatilho das matérias. Rode uma única vez.
+3. No painel do Supabase, abra **SQL Editor → New query**, cole o conteúdo de [`supabase/migrations/0001_schema.sql`](supabase/migrations/0001_schema.sql) e clique em **Run**. Isso cria tabelas, RLS, funções e o gatilho das matérias. Depois faça o mesmo com [`0002_simulados_caderno_metas.sql`](supabase/migrations/0002_simulados_caderno_metas.sql) (simulados, caderno de erros e metas). Rode cada arquivo uma única vez, na ordem.
 4. Em **Authentication → URL Configuration**, defina *Site URL* como `http://localhost:5173`.
 5. Inicie o app:
 

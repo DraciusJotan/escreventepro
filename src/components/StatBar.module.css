@@ -61,10 +61,7 @@
 
 .flag {
   margin: var(--space-1) 0 0;
-  font-family: var(--font-hand);
-  font-size: 1.25rem;
-  line-height: 1;
+  font-size: 0.78rem;
+  font-weight: 600;
   color: var(--danger);
-  transform: rotate(-1.5deg);
-  transform-origin: left;
 }

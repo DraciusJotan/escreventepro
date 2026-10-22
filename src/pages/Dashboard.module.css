@@ -1,45 +1,144 @@
-.review {
+.banner {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--space-5);
+  align-items: center;
+  margin-bottom: var(--space-5);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--banner);
+  color: #fff;
+}
+
+.bannerText h2 {
+  margin: 0 0 var(--space-3);
+  font-size: 1.9rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.bannerText h2 b {
+  font-weight: 700;
+}
+
+.bannerText p {
+  margin: 0 0 var(--space-4);
+  max-width: 46ch;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.bannerText .btn {
+  min-height: 52px;
+  padding: 0 var(--space-5);
+  font-size: 1.05rem;
+}
+
+/* mini painel da semana, no lugar da "prévia" das plataformas de curso */
+.bannerPanel {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  color: #151822;
+  box-shadow: 0 18px 36px -18px rgba(0, 20, 90, 0.7);
+}
+
+.panelTitle {
+  margin: 0 0 var(--space-3) !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #151822 !important;
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #5b6279;
+}
+
+.day i {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 34px;
+  border: 1.5px solid #c9d0e6;
+  border-radius: 8px;
+  background: #f3f5fb;
+  color: #fff;
+  font-style: normal;
+}
+
+.day[data-on='true'] i {
+  background: #19b87d;
+  border-color: #19b87d;
+}
+
+.day[data-today='true'] {
+  color: #2457f0;
+  font-weight: 700;
+}
+
+.day[data-today='true'] i {
+  border-color: #2457f0;
+  box-shadow: 0 0 0 2px #cdd9ff;
+}
+
+.day[data-future='true'] {
+  opacity: 0.5;
+}
+
+.panelNote {
+  margin: var(--space-3) 0 0 !important;
+  font-size: 0.8rem;
+  color: #5b6279 !important;
+}
+
+.cardHead {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
-  color: var(--text);
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
 }
 
-.hand {
+.cardHead :global(.card-title) {
   margin: 0;
-  font-family: var(--font-hand);
-  font-size: 1.5rem;
-  line-height: 1;
-  color: var(--text);
-  opacity: 0.8;
 }
 
-.reviewTitle {
-  margin: 2px 0 var(--space-1);
-  font-family: var(--font-display);
-  font-variation-settings: 'SOFT' 100, 'WONK' 1;
-  font-size: 1.6rem;
-  font-weight: 700;
-  line-height: 1.15;
+.of {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
-.reviewTitle b {
-  font-size: 2.4rem;
-  font-weight: 800;
-  margin-right: 4px;
+.lastExam {
+  margin: var(--space-3) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  font-size: 0.88rem;
+  color: var(--text-muted);
 }
 
-.reviewText {
-  margin: 0;
-  font-size: 0.95rem;
-  opacity: 0.85;
-}
+@media (max-width: 760px) {
+  .banner {
+    grid-template-columns: 1fr;
+    padding: var(--space-5);
+  }
 
-@media (max-width: 560px) {
-  .review .btn {
+  .bannerText h2 {
+    font-size: 1.45rem;
+  }
+
+  .bannerText .btn {
     width: 100%;
   }
 }

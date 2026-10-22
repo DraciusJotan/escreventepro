@@ -54,7 +54,7 @@ export default function Login() {
       <aside className={styles.side}>
         <span className={styles.brand}>
           <Logo size={40} />
-          Escrevente <em>Pro</em>
+          Escrevente <b>Pro</b>
         </span>
 
         <div className={styles.pitch}>
@@ -68,17 +68,17 @@ export default function Login() {
           </ul>
         </div>
 
-        <span className={styles.note}>bons estudos! ✎</span>
+        <span className={styles.note}>Escrevente Técnico Judiciário · TJSP · VUNESP</span>
       </aside>
 
       <section className={styles.formSide}>
         <div className={styles.formWrap}>
           <span className={`${styles.brand} ${styles.mobileBrand}`}>
             <Logo size={36} />
-            Escrevente <em>Pro</em>
+            Escrevente <b>Pro</b>
           </span>
           <h1 className={styles.title}>
-            <span className="hl">{isLogin ? 'Entrar' : 'Criar conta'}</span>
+            {isLogin ? 'Entrar' : 'Criar conta'}
           </h1>
           <p className={styles.subtitle}>
             {isLogin ? 'Continue de onde parou.' : 'Leva menos de um minuto.'}

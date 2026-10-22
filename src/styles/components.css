@@ -1,13 +1,8 @@
 /* Peças compartilhadas entre as páginas */
 
-/* Marca-texto: realça palavras-chave de títulos */
 .hl {
-  background: linear-gradient(transparent 56%, var(--hl) 56% 94%, transparent 94%);
-  color: var(--text);
-  padding: 0 0.12em;
-  margin: 0 -0.12em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
+  /* mantido por compatibilidade: sem efeito no novo visual */
+  color: inherit;
 }
 
 .page-header {
@@ -21,23 +16,21 @@
 
 .page-header h1 {
   margin: 0;
-  font-size: 2.3rem;
+  font-size: 1.8rem;
+  font-weight: 600;
 }
 
-/* Anotação à mão na margem */
 .eyebrow {
   margin: 0 0 2px;
-  font-family: var(--font-hand);
-  font-size: 1.35rem;
-  line-height: 1.1;
-  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .section-title {
   margin: 0 0 var(--space-3);
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .section {
@@ -47,7 +40,7 @@
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 .stack {
@@ -81,40 +74,31 @@ a.btn {
 
 .btn-danger {
   color: var(--danger);
-  border-color: var(--danger);
-  box-shadow: 0 3px 0 var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 50%, transparent);
 }
 
 .btn-danger:hover:not(:disabled) {
   background: var(--danger-bg);
-}
-
-.btn-danger:active:not(:disabled) {
-  box-shadow: 0 0 0 var(--danger);
+  border-color: var(--danger);
 }
 
 .btn-sm {
   min-height: 36px;
   padding: 0 var(--space-3);
-  font-size: 0.875rem;
-  box-shadow: 0 2px 0 var(--border-strong);
+  font-size: 0.85rem;
 }
 
-.btn-sm:active:not(:disabled) {
-  transform: translateY(2px);
-}
-
-/* Etiqueta de matéria: faixa colorida como a lombada de uma pasta */
+/* Etiqueta de matéria */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 1px 9px 1px 7px;
+  padding: 2px 10px 2px 8px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--tag, var(--primary)) 14%, transparent);
+  background: color-mix(in srgb, var(--tag, var(--primary)) 18%, transparent);
   color: var(--text);
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .badge::before {
@@ -123,6 +107,22 @@ a.btn {
   height: 8px;
   border-radius: 50%;
   background: var(--tag, var(--primary));
+}
+
+/* Pílula azul (ex.: "26 semanas", "Atual") */
+.pill {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.pill-muted {
+  background: var(--surface-2);
+  color: var(--text-muted);
 }
 
 /* Seleção de matérias como "etiquetas" clicáveis */
@@ -139,11 +139,11 @@ a.btn {
   gap: var(--space-2);
   min-height: 40px;
   padding: 0 var(--space-3);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: 999px;
-  background: var(--surface);
-  font-size: 0.92rem;
-  font-weight: 700;
+  background: var(--surface-2);
+  font-size: 0.88rem;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.12s, border-color 0.12s;
 }
@@ -163,12 +163,12 @@ a.btn {
 }
 
 .chip[data-on='true'] {
-  background: color-mix(in srgb, var(--tag, var(--primary)) 18%, var(--surface));
+  background: color-mix(in srgb, var(--tag, var(--primary)) 22%, var(--surface));
   border-color: var(--tag, var(--primary));
 }
 
 .chip:has(input:focus-visible) {
-  outline: 3px solid var(--primary);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -178,12 +178,17 @@ textarea {
   line-height: 1.55;
 }
 
-/* Painel simples */
 .card {
   background: var(--surface);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-5);
+}
+
+.card-title {
+  margin: 0 0 var(--space-3);
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 /* Lista de itens: cada linha leva a cor da matéria na lateral */
@@ -197,16 +202,11 @@ textarea {
 }
 
 .list > li {
-  position: relative;
   background: var(--surface);
-  border: 2px solid var(--border);
-  border-left: 8px solid var(--tag, var(--border-strong));
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--tag, var(--border-strong));
   border-radius: var(--radius);
   padding: var(--space-4) var(--space-5);
-}
-
-.list > .card {
-  border-radius: var(--radius);
 }
 
 .empty {
@@ -217,70 +217,57 @@ textarea {
 
 .big-number {
   margin: 0;
-  font-family: var(--font-display);
-  font-variation-settings: 'SOFT' 100, 'WONK' 1;
-  font-size: 2.4rem;
-  font-weight: 800;
-  line-height: 1;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
-/* Post-it do que está pendente */
-.postit {
-  position: relative;
-  background: var(--postit);
-  border-radius: 4px 4px 14px 4px;
-  padding: var(--space-4) var(--space-5);
-  box-shadow: 0 10px 18px -12px rgba(20, 25, 58, 0.55);
-  transform: rotate(-0.8deg);
-}
-
-.postit::before {
-  /* fita adesiva */
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  width: 84px;
-  height: 22px;
-  transform: translateX(-50%) rotate(2deg);
-  background: color-mix(in srgb, var(--hl) 70%, transparent);
-  border-radius: 2px;
-}
-
-/* Indicadores em blocos coloridos, como marca-textos diferentes */
+/* Indicadores */
 .tiles {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
-  margin-bottom: var(--space-6);
 }
 
 .tile {
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-5);
   border-radius: var(--radius-lg);
-  border: 2px solid transparent;
-  background: color-mix(in srgb, var(--tone) 16%, var(--surface));
-  border-color: color-mix(in srgb, var(--tone) 45%, transparent);
+  background: var(--surface);
+  border: 1px solid var(--border);
 }
-
-.tile[data-tone='yellow'] { --tone: #f2b800; }
-.tile[data-tone='pink'] { --tone: #e0457b; }
-.tile[data-tone='teal'] { --tone: #0f9d8a; }
 
 .tile .muted {
   display: block;
-  margin-top: var(--space-1);
+  margin-top: 2px;
   font-size: 0.85rem;
-  color: var(--text);
-  opacity: 0.8;
 }
 
-.grid-stats {
+.tile[data-tone='yellow'] .big-number { color: var(--warn); }
+.tile[data-tone='pink'] .big-number { color: #ff7aa8; }
+.tile[data-tone='teal'] .big-number { color: var(--success); }
+
+.grid-2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: var(--space-3);
-  margin-bottom: var(--space-5);
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+/* Barra de progresso fina */
+.meter {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.meter > i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+  transition: width 0.4s;
 }
 
 .truncate-3 {
@@ -299,22 +286,28 @@ textarea {
 table.simple {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 table.simple th,
 table.simple td {
   text-align: left;
   padding: var(--space-2) var(--space-3);
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1px solid var(--border);
   vertical-align: top;
 }
 
 table.simple th {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
+}
+
+@media (max-width: 760px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 560px) {
@@ -324,7 +317,7 @@ table.simple th {
   }
 
   .page-header h1 {
-    font-size: 1.9rem;
+    font-size: 1.5rem;
   }
 
   .tiles {
@@ -336,6 +329,6 @@ table.simple th {
   }
 
   .big-number {
-    font-size: 2rem;
+    font-size: 1.7rem;
   }
 }

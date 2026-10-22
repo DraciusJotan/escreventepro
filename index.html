@@ -5,18 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Escrevente Pro</title>
     <meta name="description" content="Banco de questões, revisão espaçada e acompanhamento de estudo para o concurso de Escrevente do TJSP." />
-    <meta name="theme-color" content="#1b2a8a" />
+    <meta name="theme-color" content="#16171b" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..800,0..100,0..1&family=Literata:opsz,wght@7..72,400;7..72,600&family=Atkinson+Hyperlegible:wght@400;700&family=Caveat:wght@600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('escreventepro:tema') || 'dark'
+      } catch (e) {
+        document.documentElement.dataset.theme = 'dark'
+      }
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { deleteQuestion, listQuestions } from '../services/questions'
 import { listSubjects } from '../services/subjects'
 import { tagStyle } from '../lib/subjectColor'
@@ -7,8 +7,10 @@ import { tagStyle } from '../lib/subjectColor'
 export default function Questions() {
   const [subjects, setSubjects] = useState([])
   const [subjectId, setSubjectId] = useState('')
-  const [searchInput, setSearchInput] = useState('')
-  const [search, setSearch] = useState('')
+  const [params] = useSearchParams()
+  const initialSearch = params.get('busca') ?? ''
+  const [searchInput, setSearchInput] = useState(initialSearch)
+  const [search, setSearch] = useState(initialSearch)
   const [rows, setRows] = useState([])
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(0)
@@ -18,6 +20,14 @@ export default function Questions() {
   useEffect(() => {
     listSubjects().then(setSubjects, (e) => setError(e.message))
   }, [])
+
+  // Busca feita pelo menu superior enquanto já está nesta tela
+  useEffect(() => {
+    const q = params.get('busca') ?? ''
+    setSearchInput(q)
+    setSearch(q)
+    setPage(0)
+  }, [params])
 
   // Espera o usuário parar de digitar antes de consultar o banco.
   // Mudou o filtro: volta para a primeira página.

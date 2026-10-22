@@ -11,6 +11,11 @@ import QuestionForm from './pages/QuestionForm'
 import ImportQuestions from './pages/ImportQuestions'
 import Subjects from './pages/Subjects'
 import Stats from './pages/Stats'
+import Cronograma from './pages/Cronograma'
+import Caderno from './pages/Caderno'
+import SimuladoNovo from './pages/SimuladoNovo'
+import Simulados from './pages/Simulados'
+import SimuladoResultado from './pages/SimuladoResultado'
 
 export default function App() {
   return (
@@ -30,6 +35,11 @@ export default function App() {
               <Route path="questoes/:id" element={<QuestionForm />} />
               <Route path="materias" element={<Subjects />} />
               <Route path="desempenho" element={<Stats />} />
+              <Route path="cronograma" element={<Cronograma />} />
+              <Route path="caderno" element={<Caderno />} />
+              <Route path="simulado/novo" element={<SimuladoNovo />} />
+              <Route path="simulados" element={<Simulados />} />
+              <Route path="simulados/:id" element={<SimuladoResultado />} />
             </Route>
           </Route>
 

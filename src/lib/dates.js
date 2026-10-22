@@ -29,3 +29,13 @@ export function formatBR(iso) {
   const [y, m, d] = iso.split('-')
   return `${d}/${m}/${y}`
 }
+
+// Segunda-feira da semana de uma data (semanas de segunda a domingo).
+export function mondayOf(iso) {
+  return addDays(iso, -((weekday(iso) + 6) % 7))
+}
+
+export function formatShort(iso) {
+  const [, m, d] = iso.split('-')
+  return `${d}/${m}`
+}
