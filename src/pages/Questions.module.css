@@ -1,0 +1,112 @@
+.filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.filters select,
+.filters input {
+  min-width: 0;
+}
+
+/* Barra de ações: acompanha a rolagem logo abaixo do menu superior */
+.bar {
+  position: sticky;
+  top: 60px;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.check {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+}
+
+.count {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.count b {
+  color: var(--text);
+}
+
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.barActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+.item {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.rowCheck {
+  display: grid;
+  place-items: center;
+  padding-top: 2px;
+  cursor: pointer;
+}
+
+.rowCheck input {
+  width: 20px;
+  height: 20px;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .bar {
+    top: var(--topbar-height);
+  }
+}
+
+@media (max-width: 760px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .barActions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .barActions .btn {
+    flex: 1;
+  }
+}

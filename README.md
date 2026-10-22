@@ -7,6 +7,7 @@ App web (mobile-first) para estudar para o concurso de **Escrevente Técnico Jud
 - **Login** com e-mail e senha. Cada usuário vê só os próprios dados (Row Level Security).
 - **Matérias** pré-cadastradas automaticamente no cadastro (11 matérias do edital) e editáveis.
 - **Banco de questões** de múltipla escolha (enunciado, alternativas A–E, gabarito, matéria, assunto, fonte), com filtro e busca.
+- **Escolha e resolva do banco**: filtre por matéria, prova (ano) e texto, marque questões e resolva as selecionadas, todas as filtradas ou "a partir desta".
 - **Importação em massa** por planilha `.xlsx` ou `.csv`, com prévia e relatório de erros por linha antes de salvar.
 - **Modo resolver**: escolha matérias e quantidade, responda uma por vez e veja na hora se acertou.
 - **Revisão espaçada** (SM-2 simplificado): questões erradas voltam nos dias seguintes. Tela "Revisão de hoje".

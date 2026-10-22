@@ -11,6 +11,7 @@ import QuestionForm from './pages/QuestionForm'
 import ImportQuestions from './pages/ImportQuestions'
 import Subjects from './pages/Subjects'
 import Stats from './pages/Stats'
+import ResolverSelecao from './pages/ResolverSelecao'
 import Cronograma from './pages/Cronograma'
 import Caderno from './pages/Caderno'
 import SimuladoNovo from './pages/SimuladoNovo'
@@ -31,6 +32,7 @@ export default function App() {
               <Route path="revisao" element={<Review />} />
               <Route path="questoes" element={<Questions />} />
               <Route path="questoes/nova" element={<QuestionForm />} />
+              <Route path="questoes/resolver" element={<ResolverSelecao />} />
               <Route path="questoes/importar" element={<ImportQuestions />} />
               <Route path="questoes/:id" element={<QuestionForm />} />
               <Route path="materias" element={<Subjects />} />

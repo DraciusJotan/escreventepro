@@ -21,9 +21,10 @@ export default function QuizRunner({
   subjectNames = {},
   timeLimitSeconds,
   onFinishExam,
+  initialIndex = 0,
 }) {
   const isExam = mode === 'exam'
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(() => Math.min(Math.max(initialIndex, 0), Math.max(questions.length - 1, 0)))
   const [answers, setAnswers] = useState({}) // id -> { selected, result }
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
