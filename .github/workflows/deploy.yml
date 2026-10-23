@@ -27,6 +27,17 @@ jobs:
 
       - run: npm ci
 
+      - name: Conferir configuração do Supabase
+        # Sem estas duas variáveis o app abre em branco. Melhor falhar aqui, com uma mensagem clara,
+        # do que publicar um site quebrado.
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
+            echo "::error title=Configuração ausente::Crie VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY em Settings > Secrets and variables > Actions > Repository secrets (os nomes precisam ser exatamente esses)."
+            exit 1
+          fi
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || vars.VITE_SUPABASE_ANON_KEY }}
       - name: Build
         run: npm run build
         env:
@@ -34,8 +45,8 @@ jobs:
           VITE_BASE: /${{ github.event.repository.name }}/
           # A chave anon/publishable é pública por design (a segurança é o RLS),
           # mas fica em Secrets para você trocar sem mexer no código.
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || vars.VITE_SUPABASE_ANON_KEY }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
