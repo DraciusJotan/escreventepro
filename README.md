@@ -6,6 +6,8 @@ Projeto pessoal de uso diário, desenvolvido também como exercício de **backen
 
 > Este repositório existe para **documentar** o projeto: o que foi construído, como é organizado e por que as decisões foram tomadas. Não é um template nem um produto para instalação.
 
+**Site:** https://draciusjotan.github.io/escreventepro/ (o acesso exige login; cada conta vê apenas os próprios dados, por causa do Row Level Security).
+
 ![Tela inicial](docs/img/inicio.jpg)
 
 ## O problema
