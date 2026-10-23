@@ -1,50 +1,66 @@
-# Montando seu banco de questões
+# Origem e tratamento das questões
 
-## O que existe (e o que não existe)
+Como o banco de questões do projeto foi formado e quais problemas apareceram no caminho.
 
-Não há um dataset aberto (CSV/JSON com licença livre) de questões da VUNESP ou do TJSP. Os bancos grandes (Qconcursos, TecConcursos, Estratégia) são pagos e fechados, e copiar o conteúdo deles viola os termos de uso.
+## Contexto
 
-O caminho gratuito e legítimo é usar as **provas anteriores em PDF**, que são divulgadas publicamente:
+Não existe um conjunto de dados aberto (CSV/JSON com licença livre) de questões da VUNESP ou do TJSP. Os grandes bancos comerciais são fechados, e copiar o conteúdo deles viola os termos de uso. O caminho legítimo e gratuito foi usar as **provas anteriores em PDF**, que as bancas divulgam publicamente, e transformá-las em dados estruturados.
 
-- **Site da Fundação VUNESP** (vunesp.com.br): na área de concursos encerrados do TJSP ficam o caderno de questões e o gabarito definitivo de cada edição.
-- **Estude Grátis** (estudegratis.com.br): acervo de terceiros com provas antigas da VUNESP e do TJ-SP, com gabarito para download gratuito.
+Foram tratadas as três edições mais recentes encontradas do cargo (2014, 2015 e 2017), com cem questões cada.
 
-Edições do cargo de Escrevente: 2011, 2012, 2013, 2017, 2018, 2021, 2023, 2024 e 2025, entre outras. Os gabaritos mudam depois dos recursos: use sempre o **definitivo**.
+## Resultado
 
-## Como converter uma prova em questões do app
+| Edição | Questões na prova | Aproveitadas | Descartadas |
+|---|---|---|---|
+| 2014 | 100 | 86 | 14 |
+| 2015 | 100 | 86 | 14 |
+| 2017 | 100 | 85 | 15 |
 
-1. Baixe o PDF da prova e anote o gabarito definitivo (um `.txt` com `1-A 2-B ...` ou só as letras em sequência).
-2. Veja em que número cada matéria começa e termina na prova.
-3. Rode:
+As 257 questões aproveitadas foram distribuídas pelas 11 matérias do edital. As descartadas dependem de figura, gráfico, charge ou tabela, cujo conteúdo visual não vem na extração de texto.
 
-```bash
-node scripts/pdf-to-csv.mjs prova.pdf \
-  --gabarito gabarito.txt \
-  --blocos "1-20=Língua Portuguesa;21-40=Direito Constitucional;41-60=Direito Administrativo" \
-  --fonte "VUNESP · TJSP 2023" \
-  --out prova-2023.csv
+## O pipeline
+
+```mermaid
+flowchart LR
+  A[PDF da prova] --> B[Extração de texto<br/>por posição na página]
+  B --> C[Limpeza<br/>cabeçalhos, rodapés, marca d'água]
+  C --> D[Reconhecimento<br/>de questões e alternativas]
+  D --> E[Gabarito da<br/>versão correta]
+  E --> F[Filtro de questões<br/>com figura]
+  F --> G[CSV no formato<br/>da importação]
+  G --> H[Prévia e validação<br/>no app]
 ```
 
-Os nomes em `--blocos` precisam ser iguais aos das suas matérias no app. Prova de uma matéria só: use `--materia "Matemática"`.
+A conversão é uma ferramenta de linha de comando em Node.js (`scripts/pdf-to-csv.mjs`), com o parser separado em `scripts/lib/provaParser.mjs` para poder ser testado sem PDFs.
 
-4. Abra o CSV e confira algumas questões. A coluna `assunto` fica vazia para você preencher (opcional).
-5. No app: **Questões → Importar** e envie o CSV. A prévia mostra os erros antes de salvar.
+## Problemas reais e como foram resolvidos
 
-### O que a ferramenta resolve
+| Problema | Solução |
+|---|---|
+| **Duas colunas por página**: o texto sai misturado. | Cada palavra é agrupada por posição; as colunas são lidas separadamente, esquerda e depois direita. |
+| **Ordem de leitura trocada** (a questão 42 aparecia antes da 41). | O parser aceita um número ainda não visto logo à frente, em vez de exigir a sequência estrita. |
+| **Capa confundida com a questão 1** ("001. PROVA OBJETIVA"). | Números de três dígitos começando em zero são ignorados. |
+| **Textos-base compartilhados** ("Leia o texto para responder às questões 01 a 09"). | O texto é detectado, mesmo quando a frase quebra em várias linhas, e anexado ao enunciado de cada questão do intervalo. |
+| **Títulos de seção** colando na última alternativa ("... MATEMÁTICA"). | Linhas em caixa-alta encerram a alternativa em andamento. |
+| **Cabeçalhos e rodapés** com código do caderno e número de página. | Linhas repetidas em metade das páginas e padrões de rodapé são removidos. |
+| **Marca d'água "RASCUNHO"** misturada em letras soltas no texto. | Fragmentos da palavra são removidos na limpeza final. |
+| **Palavras partidas** no fim da linha ("obri gatório"), às vezes sem o hífen no PDF. | Religação por vocabulário construído do próprio PDF: só junta se a palavra inteira existe no texto. |
+| **Várias versões do caderno**, cada uma com gabarito diferente. | Escolha da versão por questões de resposta conhecida (ex.: a de 2014 era a versão 4). |
+| **Questões com figura ou alternativas vazias.** | Detectadas por palavras como "gráfico", "figura", "charge" e por alternativas sem texto, e listadas no relatório em vez de importadas quebradas. |
 
-- Provas em duas colunas, cabeçalhos e rodapés repetidos, palavras hifenizadas na quebra de linha.
-- Texto-base compartilhado ("Leia o texto para responder às questões de 01 a 05"): o texto é anexado ao enunciado de cada questão do intervalo.
-- Títulos de seção ("MATEMÁTICA") que grudariam na última alternativa.
+## Como a qualidade foi verificada
 
-### O que ela não resolve
+- Toda linha gerada passa pelo **mesmo validador da tela de importação** do app (matéria existente, 5 alternativas, gabarito A–E).
+- Varredura automática por resíduos: marca d'água, rodapé, caracteres inválidos e palavras hifenizadas não unidas.
+- **Conferência de respostas conhecidas** em cada edição (por exemplo, questões de Direito cuja resposta é inequívoca) para confirmar que o gabarito certo foi associado à prova certa.
 
-Questões com **figura, tabela ou fórmula** perdem o conteúdo visual, e **questões anuladas** não têm gabarito. Essas ficam listadas no relatório ("Não exportadas") para você cadastrar à mão se valer a pena. PDFs escaneados (imagem) precisam de OCR antes.
+## Limitações assumidas
+
+- O gabarito usado é o divulgado logo após a prova, e não necessariamente o definitivo pós-recursos. Questões anuladas ou alteradas depois podem estar com a letra desatualizada.
+- A divisão por matéria é inferida pelos cabeçalhos e pelo conteúdo, com margem de uma questão nas fronteiras.
+- Restam poucas palavras partidas, quase todas na edição de 2015.
+- O número original da questão não é gravado, então a ordem original da prova não é preservada dentro de cada edição (previsto no roadmap).
 
 ## Direitos autorais
 
-As questões pertencem à banca. Uso pessoal para estudo é o esperado, mas **não publique as questões no repositório do GitHub** (portfólio público). Elas ficam só no seu banco no Supabase, que é privado por usuário. Os `.csv`/`.pdf` gerados já estão no `.gitignore`.
-
-## Outras fontes
-
-- **Você mesmo + IA (fase 2):** cole o texto da lei seca e o Claude gera questões no estilo VUNESP para você revisar. Serve para cobrir lacunas onde faltam questões reais.
-- **Erros dos simulados:** cadastre à mão as questões que você errou em cursos e apostilas que você já possui.
+As questões pertencem às bancas. Elas são usadas **apenas para estudo pessoal** e ficam somente no banco privado do usuário no Supabase. Nenhuma questão real está neste repositório; as capturas de tela usam exemplos escritos para a documentação.

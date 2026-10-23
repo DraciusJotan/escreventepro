@@ -1,133 +1,148 @@
 # Escrevente Pro
 
-App web (mobile-first) para estudar para o concurso de **Escrevente Técnico Judiciário do TJSP** (banca VUNESP). Projeto pessoal, também usado para aprender backend de verdade com Supabase e Postgres.
+Plataforma web de estudos para o concurso de **Escrevente Técnico Judiciário do TJSP** (banca VUNESP): banco de questões próprio, revisão espaçada, simulados cronometrados e acompanhamento de constância.
 
-## Funcionalidades (MVP)
+Projeto pessoal de uso diário, desenvolvido também como exercício de **backend de verdade**: modelagem relacional, segurança no nível do banco (Row Level Security), regras de negócio em funções SQL e migrations versionadas.
 
-- **Login** com e-mail e senha. Cada usuário vê só os próprios dados (Row Level Security).
-- **Matérias** pré-cadastradas automaticamente no cadastro (11 matérias do edital) e editáveis.
-- **Banco de questões** de múltipla escolha (enunciado, alternativas A–E, gabarito, matéria, assunto, fonte), com filtro e busca.
-- **Escolha e resolva do banco**: filtre por matéria, prova (ano) e texto, marque questões e resolva as selecionadas, todas as filtradas ou "a partir desta".
-- **Importação em massa** por planilha `.xlsx` ou `.csv`, com prévia e relatório de erros por linha antes de salvar.
-- **Modo resolver**: escolha matérias e quantidade, responda uma por vez e veja na hora se acertou.
-- **Revisão espaçada** (SM-2 simplificado): questões erradas voltam nos dias seguintes. Tela "Revisão de hoje".
-- **Mapa de calor** anual de questões resolvidas por dia (estilo GitHub) e sequência de dias.
-- **Painel de desempenho**: % de acerto geral e por matéria, com as mais fracas em destaque.
-- **Simulados cronometrados**: marque as respostas, veja a nota só no fim, com resultado por matéria e histórico.
-- **Caderno de erros**: questões cuja última resposta foi errada; acertou de novo, sai do caderno.
-- **Cronograma**: meta semanal de questões e progresso das últimas semanas.
-- **Navegação de questões** com Anterior/Próxima e grade de gabarito por blocos; tema escuro (padrão), claro ou automático.
+> Este repositório existe para **documentar** o projeto: o que foi construído, como é organizado e por que as decisões foram tomadas. Não é um template nem um produto para instalação.
+
+![Tela inicial](docs/img/inicio.jpg)
+
+## O problema
+
+Estudar para concurso exige três coisas que plataformas genéricas resolvem mal:
+
+1. **Fazer questões da própria banca**, em volume, filtrando por matéria e prova.
+2. **Revisar o que se errou no dia certo**, em vez de reler tudo.
+3. **Manter constância**, enxergando semana a semana se a meta está sendo cumprida.
+
+O Escrevente Pro junta as três coisas num app que funciona bem no celular (onde a maior parte do estudo acontece) e no computador.
+
+## Telas
+
+| Banco de questões | Resolvendo uma questão |
+|---|---|
+| ![Banco de questões com filtros e seleção](docs/img/banco.jpg) | ![Questão respondida com carimbo e gabarito por blocos](docs/img/questao.jpg) |
+
+| Resultado de simulado | Cronograma semanal |
+|---|---|
+| ![Resultado de um simulado por matéria](docs/img/simulado-resultado.jpg) | ![Metas e progresso por semana](docs/img/cronograma.jpg) |
+
+| Celular: início | Celular: questão |
+|---|---|
+| <img src="docs/img/mobile-inicio.jpg" width="300" alt="Tela inicial no celular"> | <img src="docs/img/mobile-questao.jpg" width="300" alt="Questão no celular"> |
+
+> As capturas usam questões de exemplo escritas para a documentação. O conteúdo real das provas não faz parte do repositório.
+
+## Funcionalidades
+
+**Estudo**
+- **Banco de questões** de múltipla escolha (A–E) com matéria, assunto e fonte, além de busca e filtros por matéria e por prova.
+- **Escolher e resolver**: marcar questões, resolver as filtradas ou seguir "a partir desta".
+- **Resolver por sorteio**, com matérias e quantidade à escolha.
+- **Navegação Anterior/Próxima** com grade de gabarito por blocos e atalhos de teclado.
+- **Simulados cronometrados**: marcação sem correção imediata, nota ao final, resultado por matéria e histórico.
+
+**Memória e constância**
+- **Revisão espaçada** (SM-2 simplificado): o que se erra volta em 1, 3, 8, 21… dias.
+- **Caderno de erros**: questões cuja última resposta foi errada; ao acertar, saem do caderno.
+- **Cronograma** com meta semanal de questões e progresso das últimas semanas.
+- **Mapa de calor** anual e sequência de dias estudados.
+- **Painel de desempenho** por matéria, destacando as mais fracas.
+
+**Gestão do banco**
+- Cadastro e edição de questões, matérias editáveis por usuário.
+- **Importação em massa** por planilha `.xlsx`/`.csv` com prévia e relatório de erros por linha.
+- Ferramenta de linha de comando que converte provas anteriores em PDF para a planilha de importação (ver [origem das questões](docs/banco-de-questoes.md)).
+
+**Experiência**
+- Mobile-first, com menu superior no computador e barra de abas no celular.
+- Tema escuro (padrão), claro ou automático.
+- Instalável na tela inicial do celular (PWA básico, sem modo offline).
+
+## Arquitetura em uma imagem
+
+```mermaid
+flowchart LR
+  subgraph Cliente
+    A[React + Vite<br/>SPA]
+  end
+  subgraph Supabase
+    B[Auth<br/>e-mail e senha]
+    C[API REST / RPC<br/>PostgREST]
+    D[(Postgres<br/>com RLS)]
+  end
+  A -->|JWT do usuário| C
+  A --> B
+  C --> D
+  D --- E[Funções SQL<br/>submit_answer · random_questions<br/>subject_stats · daily_activity<br/>wrong_questions]
+  F[GitHub Actions] -->|build| G[GitHub Pages]
+  G --> A
+```
+
+O navegador conversa direto com o Supabase usando apenas a chave pública. **Quem garante o isolamento entre usuários é o banco**, e não o código do frontend. Detalhes em [docs/arquitetura.md](docs/arquitetura.md) e [docs/banco-de-dados.md](docs/banco-de-dados.md).
 
 ## Stack
 
 | Camada | Tecnologia |
 |---|---|
-| Frontend | React 19, Vite, React Router, CSS Modules (JavaScript), fontes Poppins e Literata |
+| Interface | React 19, Vite, React Router, CSS Modules (JavaScript) |
 | Backend | Supabase: Auth, Postgres, Row Level Security, funções SQL (RPC) |
-| Planilhas | SheetJS (carregado sob demanda só na tela de importação) |
-| Deploy | GitHub Pages (GitHub Actions) |
-| IA (fase 2) | API do Claude via Supabase Edge Functions |
+| Planilhas | SheetJS, carregado sob demanda só na tela de importação |
+| Ferramentas | Node.js (conversão de provas), pdf.js |
+| Hospedagem | GitHub Pages, publicado por GitHub Actions |
+| Fase 2 (planejada) | API de IA via Supabase Edge Functions |
 
-## Decisões de arquitetura
+## Decisões de projeto
 
-- **RLS em todas as tabelas.** A chave pública (`anon`/`publishable`) fica no navegador por design. Quem isola os dados é o Postgres: toda política exige `user_id = auth.uid()`. Chaves estrangeiras compostas `(id, user_id)` impedem até que uma linha aponte para dados de outro usuário.
-- **Regra de negócio no banco.** `submit_answer()` confere o gabarito, grava a tentativa e atualiza a revisão espaçada numa única transação. O navegador nunca decide se acertou.
-- **Estatísticas agregadas em SQL** (`subject_stats`, `daily_activity`), não no celular. Os dias do mapa de calor usam o fuso `America/Sao_Paulo`.
-- **Sorteio no banco** (`random_questions`), em vez de baixar todas as questões.
-- **Migrations versionadas** em `supabase/migrations/`: o schema fica no Git.
-- **`services/`** concentra toda conversa com o Supabase; as páginas não chamam o banco diretamente.
+- **Segurança no banco.** Toda tabela tem `user_id` e Row Level Security. Chaves estrangeiras compostas `(id, user_id)` impedem que uma linha aponte para dados de outro usuário, mesmo que alguém chame a API diretamente.
+- **Regras de negócio em funções SQL.** `submit_answer` confere o gabarito, grava a tentativa e atualiza a revisão espaçada numa única transação. O navegador nunca decide se acertou.
+- **Agregações no banco.** Estatísticas e mapa de calor são `GROUP BY` no Postgres, em vez de baixar o histórico inteiro para o celular. Datas usam o fuso `America/Sao_Paulo`, para uma resposta às 22h não "virar" o dia seguinte por causa do UTC.
+- **Sorteio no banco.** `random_questions` usa `ORDER BY random()`, sem trazer o banco inteiro.
+- **Migrations versionadas.** O schema vive em `supabase/migrations/`, no Git, e não em cliques no painel.
+- **Camada de serviços.** Páginas não chamam o banco diretamente: tudo passa por `src/services/`.
+- **Hospedagem estática.** O app é uma SPA em subpasta do GitHub Pages: o build usa `base` configurável e gera um `404.html` para o React Router assumir as rotas.
+- **Importação com validação em duas etapas.** O arquivo é lido e validado no navegador, com prévia e erros por linha, antes de qualquer gravação.
 
-### Como funciona a revisão espaçada
+### Revisão espaçada em duas linhas
 
-Algoritmo SM-2 simplificado para acerto/erro (sem nota de 0 a 5). Cada questão na fila tem um fator de facilidade (`ease`, começa em 2,5).
+Algoritmo SM-2 simplificado para acerto/erro (sem nota de 0 a 5). Errou: volta amanhã e o fator de facilidade cai. Acertou uma questão da fila: 3 dias, depois intervalo anterior × fator, com teto de 60 dias porque a prova tem data marcada. Explicação completa em [docs/banco-de-dados.md](docs/banco-de-dados.md#revisão-espaçada).
 
-| Situação | Efeito |
-|---|---|
-| Errou (qualquer modo) | Entra na fila ou reinicia. Volta **amanhã**. `ease` −0,2 (mín. 1,3) |
-| Acertou uma questão da fila | 1º acerto: **3 dias**. Depois: intervalo anterior × `ease`. `ease` +0,1 (máx. 3,0). Teto de 60 dias |
-| Acertou uma questão fora da fila | Nada muda |
+## Segurança e privacidade
 
-Sequência típica após um erro: 1 → 3 → 8 → 21 → 57 dias. Questões erradas muitas vezes têm `ease` baixo e voltam com mais frequência.
+- A chave exposta no navegador é a **pública** (anon/publishable). Ela só funciona dentro das regras do RLS.
+- Nenhuma chave secreta está no código nem no histórico. Variáveis ficam fora do repositório.
+- A chave de qualquer serviço de IA ficará apenas em *secrets* de Edge Functions, nunca no frontend.
+- Questões de provas pertencem às bancas e **não são publicadas aqui**: ficam apenas no banco privado do usuário.
 
-## Rodando localmente
-
-Pré-requisitos: Node.js 20+ e uma conta gratuita no [Supabase](https://supabase.com).
-
-```bash
-npm install
-cp .env.example .env.local   # no Windows (PowerShell): copy .env.example .env.local
-```
-
-1. Crie um projeto no Supabase (região South America – São Paulo).
-2. Preencha o `.env.local` com a **Project URL** e a chave **anon/publishable** (Project Settings → API). Nunca use a chave `service_role`/`secret` no frontend.
-3. No painel do Supabase, abra **SQL Editor → New query**, cole o conteúdo de [`supabase/migrations/0001_schema.sql`](supabase/migrations/0001_schema.sql) e clique em **Run**. Isso cria tabelas, RLS, funções e o gatilho das matérias. Depois faça o mesmo com [`0002_simulados_caderno_metas.sql`](supabase/migrations/0002_simulados_caderno_metas.sql) (simulados, caderno de erros e metas). Rode cada arquivo uma única vez, na ordem.
-4. Em **Authentication → URL Configuration**, defina *Site URL* como `http://localhost:5173`.
-5. Inicie o app:
-
-```bash
-npm run dev
-```
-
-Abra http://localhost:5173 e crie sua conta.
-
-> Alternativa com a Supabase CLI: `npx supabase login`, `npx supabase link --project-ref <ref>` e `npx supabase db push`.
-
-### Scripts
-
-| Comando | O que faz |
-|---|---|
-| `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Build de produção em `dist/` |
-| `npm run lint` | Lint com oxlint |
-| `node scripts/gen-template.mjs` | Regera `public/modelo-questoes.xlsx` e `.csv` |
-| `node scripts/parse-check.mjs` | Verifica o parser de importação |
-| `node scripts/pdf-to-csv.mjs prova.pdf ...` | Converte prova em PDF + gabarito para CSV |
-| `node scripts/parse-prova-check.mjs` | Verifica o parser de provas |
-
-## Banco de questões
-
-Não existe dataset aberto da VUNESP. A ferramenta `scripts/pdf-to-csv.mjs` converte as provas anteriores em PDF (públicas) para a planilha de importação. Guia completo em [docs/banco-de-questoes.md](docs/banco-de-questoes.md).
-
-## Importando questões
-
-Baixe o modelo na tela **Questões → Importar**. Colunas: `materia`, `assunto`, `enunciado`, `alternativa_a` … `alternativa_e`, `gabarito` (A–E), `fonte`. O nome da matéria deve ser igual ao de uma das suas matérias (maiúsculas e acentos não importam). Aceita CSV separado por vírgula ou ponto e vírgula (padrão do Excel brasileiro).
-
-## Deploy (GitHub Pages)
-
-O repositório já traz o workflow `.github/workflows/deploy.yml`: a cada push na `main` ele roda o build e publica o site.
-
-1. Crie o repositório no GitHub (público, para o Pages gratuito) e faça o push.
-2. Em **Settings → Pages → Build and deployment**, escolha **Source: GitHub Actions**.
-3. Em **Settings → Secrets and variables → Actions → New repository secret**, cadastre:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY` (chave publishable/anon; a `service_role`/`secret` **nunca** entra aqui)
-4. No Supabase, em **Authentication → URL Configuration**, defina *Site URL* e adicione em *Redirect URLs* o endereço do site: `https://USUARIO.github.io/NOME-DO-REPOSITORIO/`.
-5. Faça um push (ou rode o workflow em **Actions → Deploy no GitHub Pages → Run workflow**). O endereço aparece no fim da execução.
-
-Detalhes técnicos: o site fica numa subpasta (`/NOME-DO-REPOSITORIO/`), então o Vite usa `base` (variável `VITE_BASE`) e o React Router usa `basename`. O Pages não conhece as rotas do app, então o build copia `index.html` para `404.html` (`scripts/spa-fallback.mjs`) e o React Router assume a rota. Em hospedagens na raiz (como a Vercel, que usa o `vercel.json`) o padrão `/` já funciona.
-
-## Segurança
-
-- `.env.local` nunca é commitado (está no `.gitignore`).
-- Só variáveis com prefixo `VITE_` chegam ao navegador. Segredos (ex.: chave do Claude) nunca usam esse prefixo.
-- A chave da API do Claude ficará somente nos *secrets* das Edge Functions (fase 2).
-
-## Estrutura
+## Organização do código
 
 ```
 src/
-  lib/          cliente Supabase, datas (fuso SP), parser de importação
-  contexts/     AuthContext (sessão)
-  services/     toda comunicação com o Supabase
-  components/   Layout, Heatmap, QuizRunner, StatBar, ProtectedRoute
-  pages/        Login, Dashboard, Practice, Review, Questions, Import, Subjects, Stats
-supabase/migrations/   schema, RLS e funções SQL
-scripts/               gerador do modelo de planilha e verificações
+  components/   Layout (menu superior), QuizRunner, Heatmap, StatBar, Menu…
+  contexts/     Autenticação e tema
+  lib/          Cliente Supabase, datas (fuso SP), cores por matéria, parser de importação
+  pages/        Telas: início, banco, resolver, simulados, caderno, cronograma…
+  services/     Toda a comunicação com o Supabase
+supabase/migrations/   Schema, RLS e funções SQL
+scripts/               Conversão de provas em PDF e verificações do parser
+docs/                  Documentação detalhada
 ```
 
-## Roadmap (fase 2)
+## Qualidade
 
-- Botão "Explicar com IA" (Claude explica o gabarito e o erro cometido)
-- Geração de questões no estilo VUNESP a partir de trechos de lei, com revisão manual antes de salvar
+- As regras do banco (revisão espaçada, isolamento entre usuários, caderno de erros, simulados) foram validadas durante o desenvolvimento em um Postgres local, simulando usuários distintos e as políticas de RLS.
+- O parser de importação e o parser de provas têm verificações automatizadas em `scripts/`.
+- Não há ainda suíte de testes automatizados da interface; está no roadmap.
+
+## Roadmap
+
+- Explicação por IA de cada questão (o gabarito e o erro cometido)
+- Geração de questões no estilo da banca a partir de trechos de lei, com revisão manual obrigatória antes de salvar
 - Resumo semanal gerado por IA com os assuntos mais errados
-- Cronograma de estudo com meta de horas por semana
+- Filtro de questões "ainda não resolvidas" e ordem original da prova
+- Testes automatizados de interface e do banco
+
+## Direitos
+
+Código disponibilizado para consulta como documentação de portfólio. **Todos os direitos reservados**: não há licença para cópia, redistribuição ou uso comercial sem autorização do autor.
