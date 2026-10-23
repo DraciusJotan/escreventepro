@@ -22,7 +22,7 @@ App web (mobile-first) para estudar para o concurso de **Escrevente Técnico Jud
 
 | Camada | Tecnologia |
 |---|---|
-| Frontend | React 19, Vite, React Router, CSS Modules (JavaScript), fontes IBM Plex Sans e Source Serif 4 |
+| Frontend | React 19, Vite, React Router, CSS Modules (JavaScript), fontes Poppins e Literata |
 | Backend | Supabase: Auth, Postgres, Row Level Security, funções SQL (RPC) |
 | Planilhas | SheetJS (carregado sob demanda só na tela de importação) |
 | Deploy | GitHub Pages (GitHub Actions) |
