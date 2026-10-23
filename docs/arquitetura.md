@@ -57,11 +57,13 @@ Fazer isso numa função SQL evita estados inconsistentes: se a rede cair no mei
 - As rotas privadas ficam atrás de um `ProtectedRoute`. Isso é só conforto de navegação: **a segurança real é o RLS**, que continua valendo para qualquer chamada direta à API.
 - A chave usada no navegador é a pública. Nenhum segredo existe no frontend.
 
-## Navegação e execução
+## Navegação e hospedagem
 
 - SPA com React Router. As rotas principais: início, cronograma, banco de questões (lista, nova, importar, resolver seleção), resolver, revisão, caderno, simulados (novo, histórico, resultado), desempenho e matérias.
-- O projeto é de uso pessoal e roda em ambiente local; o backend (Auth, banco e funções) é o Supabase na nuvem.
-- O build é **estático e portátil**, pensado para qualquer hospedagem de arquivos: aceita um prefixo de endereço configurável (`base` no Vite e `basename` no roteador, para viver em subpastas) e gera um `404.html` idêntico ao `index.html`, para que hospedagens que não conhecem as rotas do React deixem o roteador assumir. Essas adaptações foram feitas e testadas no build, mas o app não está publicado.
+- Hospedagem estática no GitHub Pages, publicada por GitHub Actions. Duas adaptações foram necessárias:
+  1. o site vive em uma subpasta (`/nome-do-repositorio/`), então o Vite recebe um `base` e o roteador um `basename`;
+  2. o Pages não conhece rotas do React, então o build copia `index.html` para `404.html`, e o roteador assume a rota.
+- A variável `VITE_BASE`, as chaves públicas e o build ficam no workflow, não no código.
 
 ## Interface
 

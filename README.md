@@ -76,6 +76,8 @@ flowchart LR
   A --> B
   C --> D
   D --- E[Funções SQL<br/>submit_answer · random_questions<br/>subject_stats · daily_activity<br/>wrong_questions]
+  F[GitHub Actions] -->|build| G[GitHub Pages]
+  G --> A
 ```
 
 O navegador conversa direto com o Supabase usando apenas a chave pública. **Quem garante o isolamento entre usuários é o banco**, e não o código do frontend. Detalhes em [docs/arquitetura.md](docs/arquitetura.md) e [docs/banco-de-dados.md](docs/banco-de-dados.md).
@@ -88,7 +90,7 @@ O navegador conversa direto com o Supabase usando apenas a chave pública. **Que
 | Backend | Supabase: Auth, Postgres, Row Level Security, funções SQL (RPC) |
 | Planilhas | SheetJS, carregado sob demanda só na tela de importação |
 | Ferramentas | Node.js (conversão de provas), pdf.js |
-| Execução | Uso pessoal, em ambiente local (servidor de desenvolvimento do Vite) |
+| Hospedagem | GitHub Pages, publicado por GitHub Actions |
 | Fase 2 (planejada) | API de IA via Supabase Edge Functions |
 
 ## Decisões de projeto
@@ -99,7 +101,7 @@ O navegador conversa direto com o Supabase usando apenas a chave pública. **Que
 - **Sorteio no banco.** `random_questions` usa `ORDER BY random()`, sem trazer o banco inteiro.
 - **Migrations versionadas.** O schema vive em `supabase/migrations/`, no Git, e não em cliques no painel.
 - **Camada de serviços.** Páginas não chamam o banco diretamente: tudo passa por `src/services/`.
-- **Build estático e portátil.** O app é uma SPA sem servidor próprio: todo o backend é o Supabase. O build aceita `base` configurável e gera um `404.html` de fallback, o que o deixa pronto para qualquer hospedagem estática, embora hoje seja usado apenas localmente.
+- **Hospedagem estática.** O app é uma SPA em subpasta do GitHub Pages: o build usa `base` configurável e gera um `404.html` para o React Router assumir as rotas.
 - **Importação com validação em duas etapas.** O arquivo é lido e validado no navegador, com prévia e erros por linha, antes de qualquer gravação.
 
 ### Revisão espaçada em duas linhas
