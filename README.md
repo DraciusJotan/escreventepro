@@ -113,7 +113,7 @@ Algoritmo SM-2 simplificado para acerto/erro (sem nota de 0 a 5). Errou: volta a
 ## Segurança e privacidade
 
 - A chave exposta no navegador é a **pública** (anon/publishable). Ela só funciona dentro das regras do RLS.
-- Nenhuma chave secreta está no código nem no histórico. Variáveis ficam fora do repositório.
+- Nenhuma chave **secreta** está no código nem no histórico. A URL do projeto e a chave pública (publishable) ficam no workflow de publicação, porque o site as entrega a qualquer visitante de qualquer forma; a chave secreta (`service_role`) nunca é usada no frontend.
 - A chave de qualquer serviço de IA ficará apenas em *secrets* de Edge Functions, nunca no frontend.
 - Questões de provas pertencem às bancas e **não são publicadas aqui**: ficam apenas no banco privado do usuário.
 
