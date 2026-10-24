@@ -89,7 +89,7 @@
   inset: auto 0 0 0;
   z-index: 35;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   background: var(--nav-bg);
   border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom);
@@ -107,7 +107,7 @@
   border: 0;
   background: none;
   font: inherit;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 500;
   line-height: 1.15;
   text-align: center;

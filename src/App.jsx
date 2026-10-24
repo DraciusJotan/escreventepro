@@ -13,6 +13,7 @@ import Subjects from './pages/Subjects'
 import Stats from './pages/Stats'
 import ResolverSelecao from './pages/ResolverSelecao'
 import Cronograma from './pages/Cronograma'
+import Aulas from './pages/Aulas'
 import Caderno from './pages/Caderno'
 import SimuladoNovo from './pages/SimuladoNovo'
 import Simulados from './pages/Simulados'
@@ -38,6 +39,7 @@ export default function App() {
               <Route path="materias" element={<Subjects />} />
               <Route path="desempenho" element={<Stats />} />
               <Route path="cronograma" element={<Cronograma />} />
+              <Route path="aulas" element={<Aulas />} />
               <Route path="caderno" element={<Caderno />} />
               <Route path="simulado/novo" element={<SimuladoNovo />} />
               <Route path="simulados" element={<Simulados />} />

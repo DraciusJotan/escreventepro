@@ -72,6 +72,11 @@ export default function Layout() {
             <span>Cronograma</span>
           </NavLink>
 
+          <NavLink to="/aulas" className={linkClass}>
+            <Icon name="video" size={22} />
+            <span>Aulas</span>
+          </NavLink>
+
           <Menu
             label="Questões e simulados"
             triggerClassName={inQuestionArea ? `${styles.link} ${styles.active}` : styles.link}

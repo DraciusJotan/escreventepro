@@ -134,3 +134,6 @@ export function isMissingSchema(error) {
 
 export const MIGRATION_HINT =
   'Falta rodar a migration 0002 no Supabase (SQL Editor → supabase/migrations/0002_simulados_caderno_metas.sql).'
+
+export const MIGRATION_HINT_AULAS =
+  'Falta rodar a migration 0003 no Supabase (SQL Editor → supabase/migrations/0003_aulas.sql).'

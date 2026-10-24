@@ -72,6 +72,11 @@ Fazer isso numa função SQL evita estados inconsistentes: se a rede cair no mei
 - **Acessibilidade:** alvos de toque de pelo menos 44px, foco visível, estados também por texto e não só por cor, atalhos de teclado na questão (A–E, Enter, setas) e respeito a `prefers-reduced-motion`.
 - **Identidade visual:** cada matéria tem uma cor fixa (etiquetas, filtros e barras), o carimbo CERTO/ERRADO dá retorno imediato, e a grade de gabarito mostra de relance o andamento da sessão.
 
+## Videoaulas
+
+- O app nunca hospeda nem copia vídeos: cada aula é um **link do YouTube** guardado no banco. O player é um `iframe` do domínio `youtube-nocookie.com`, montado a partir de um identificador validado no cliente (`lib/youtube.js`), e nunca a partir do texto bruto digitado.
+- Há uma lista inicial de aulas gratuitas, em `src/data/`, que o usuário escolhe adicionar. Cada link foi verificado no oEmbed público do YouTube (existe, é público e pode ser incorporado). A qualidade e a atualização do conteúdo dependem dos autores dos vídeos.
+
 ## Desempenho
 
 - A biblioteca de planilhas (SheetJS) só é baixada na tela de importação (importação dinâmica).

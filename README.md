@@ -52,6 +52,11 @@ O Escrevente Pro junta as três coisas num app que funciona bem no celular (onde
 - **Mapa de calor** anual e sequência de dias estudados.
 - **Painel de desempenho** por matéria, destacando as mais fracas.
 
+**Aulas**
+- Seção de **videoaulas** organizadas por matéria e assunto, com player incorporado e marcação de aulas assistidas.
+- O app **não hospeda vídeos**: guarda só links do YouTube (vídeo ou playlist), com lista inicial de aulas gratuitas verificadas e possibilidade de adicionar as próprias.
+- Atalho "Ver aulas de…" ao errar uma questão.
+
 **Gestão do banco**
 - Cadastro e edição de questões, matérias editáveis por usuário.
 - **Importação em massa** por planilha `.xlsx`/`.csv` com prévia e relatório de erros por linha.
@@ -143,6 +148,7 @@ docs/                  Documentação detalhada
 - Geração de questões no estilo da banca a partir de trechos de lei, com revisão manual obrigatória antes de salvar
 - Resumo semanal gerado por IA com os assuntos mais errados
 - Filtro de questões "ainda não resolvidas" e ordem original da prova
+- Aulas ligadas aos assuntos que mais se erra
 - Testes automatizados de interface e do banco
 
 ## Direitos

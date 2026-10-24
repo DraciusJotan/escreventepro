@@ -31,6 +31,8 @@ const PATHS = {
   folder:
     'M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2z',
   x: 'M18 6 6 18M6 6l12 12',
+  play: 'M6 4l14 8-14 8z',
+  video: 'M16 8.5 22 5v14l-6-3.5M3 5h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z',
 }
 
 export default function Icon({ name, size = 20 }) {

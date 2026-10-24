@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { submitAnswer } from '../services/answers'
 import { LETTERS, optionOf } from '../services/questions'
 import { formatDuration } from '../services/exams'
+import { Link } from 'react-router'
 import { formatBR } from '../lib/dates'
 import { subjectColor } from '../lib/subjectColor'
 import Icon from './Icon'
@@ -260,6 +261,11 @@ export default function QuizRunner({
               <span>
                 {result.is_correct ? 'Próxima revisão' : 'Volta para revisão'} em {formatBR(result.next_due)}.
               </span>
+            )}
+            {!result.is_correct && subject && (
+              <Link to={`/aulas?materia=${question.subject_id}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', fontWeight: 600 }}>
+                Ver aulas de {subject}
+              </Link>
             )}
           </div>
         )}
