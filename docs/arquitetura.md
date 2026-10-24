@@ -76,6 +76,14 @@ Fazer isso numa função SQL evita estados inconsistentes: se a rede cair no mei
 
 - O app nunca hospeda nem copia vídeos: cada aula é um **link do YouTube** guardado no banco. O player é um `iframe` do domínio `youtube-nocookie.com`, montado a partir de um identificador validado no cliente (`lib/youtube.js`), e nunca a partir do texto bruto digitado.
 - Há uma lista inicial de aulas gratuitas, em `src/data/`, que o usuário escolhe adicionar. Cada link foi verificado no oEmbed público do YouTube (existe, é público e pode ser incorporado). A qualidade e a atualização do conteúdo dependem dos autores dos vídeos.
+- A lista cobre quase todos os assuntos do edital (55 de 56; "fatos atuais" de Atualidades não tem aula fixa, por mudar a cada ano). Cada aula carrega uma chave de assunto (`edital_key`) que a liga ao checklist.
+
+## Edital e simulado modelo
+
+- `src/data/edital.js` descreve a prova (datas, número de questões, regras de corte), os três blocos e os assuntos de cada matéria. É dado estático: não depende do banco.
+- O checklist de estudo guarda só `topic_key` e `done` na tabela `edital_progress`.
+- O simulado modelo sorteia, por matéria, o número de questões do plano do edital. A distribuição interna do Bloco II (Direito) é estimada, pois o edital só informa o total de 30.
+- O resultado do simulado agrupa as respostas por bloco para aplicar o corte de 50% nos eliminatórios. A redação não entra nessa conta.
 
 ## Desempenho
 

@@ -75,7 +75,8 @@ Todas as tabelas têm `user_id` (com padrão `auth.uid()`) apontando para `auth.
 | `review_items` | Estado da revisão espaçada: uma linha por questão que está na fila. |
 | `exams` | Simulados realizados: resumo, tempo e um `jsonb` com `[{ q, sel, ok }]` por questão. |
 | `user_settings` | Preferências por usuário (meta semanal de questões, entre 1 e 5000). |
-| `lessons` | Videoaulas: só o **link** do YouTube (vídeo ou playlist), matéria, assunto e se foi assistida. Um `check` restringe a URL a domínios do YouTube e `unique(user_id, url)` evita duplicatas. Apagar a matéria não apaga a aula (`on delete set null` só na coluna `subject_id`). |
+| `lessons` | Videoaulas: só o **link** do YouTube (vídeo ou playlist), matéria, assunto e se foi assistida. Um `check` restringe a URL a domínios do YouTube e `unique(user_id, url)` evita duplicatas. Apagar a matéria não apaga a aula (`on delete set null` só na coluna `subject_id`). `edital_key` liga a aula a um assunto do edital. |
+| `edital_progress` | Checklist do edital: uma linha por assunto (`topic_key`) com `done`. Chave primária `(user_id, topic_key)`. |
 
 **Por que 5 colunas e não uma tabela de alternativas?** As provas da banca têm sempre 5 alternativas fixas. Colunas mapeiam 1:1 com a planilha de importação e evitam JOINs. Uma tabela separada seria o caminho se o número de alternativas variasse.
 
@@ -124,6 +125,6 @@ A tela "Revisão de hoje" lista tudo que tem `due_date <= hoje`, incluindo as at
 |---|---|
 | `0001_schema.sql` | Tabelas centrais, RLS, gatilhos, `submit_answer`, `random_questions`, `subject_stats`, `daily_activity` e permissões. |
 | `0002_simulados_caderno_metas.sql` | Modo `exam` nas respostas, tabelas `exams` e `user_settings`, função `wrong_questions`. |
-| `0003_aulas.sql` | Tabela `lessons` (links de videoaulas e progresso) com RLS. |
+| `0003_aulas.sql` | Tabelas `lessons` (links de videoaulas e progresso) e `edital_progress` (checklist do edital), com RLS. |
 
 Cada migration foi pensada para ser aplicada uma única vez e em ordem, e o `0002` foi escrito para rodar em cima de um banco que já tem dados do `0001` sem alterá-los.

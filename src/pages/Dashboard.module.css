@@ -142,3 +142,15 @@
     width: 100%;
   }
 }
+
+.countdown {
+  margin: var(--space-3) 0 0 !important;
+  padding-top: var(--space-3);
+  border-top: 1px solid #dfe3ee;
+  font-size: 0.8rem;
+  color: #5b6279 !important;
+}
+
+.countdown b {
+  color: #151822;
+}

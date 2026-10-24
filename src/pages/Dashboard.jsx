@@ -3,7 +3,8 @@ import { Link } from 'react-router'
 import Heatmap from '../components/Heatmap'
 import Icon from '../components/Icon'
 import StatBar from '../components/StatBar'
-import { addDays, formatShort, heatmapRange, mondayOf, todayISO } from '../lib/dates'
+import { PROVA } from '../data/edital'
+import { addDays, daysBetween, formatBR, formatShort, heatmapRange, mondayOf, todayISO } from '../lib/dates'
 import { countDueReviews } from '../services/answers'
 import { listExams } from '../services/exams'
 import { countWrongQuestions } from '../services/questions'
@@ -67,6 +68,8 @@ export default function Dashboard() {
     const iso = addDays(monday, i)
     return { label, iso, total: byDay.get(iso) ?? 0, future: iso > today, isToday: iso === today }
   })
+  const daysToExam = daysBetween(today, PROVA.data)
+  const daysToSignup = daysBetween(today, PROVA.inscricoesFim)
   const weekTotal = week.reduce((s, d) => s + d.total, 0)
   const weekPct = Math.min(100, Math.round((weekTotal / goal) * 100))
   const yearTotal = activity.reduce((sum, a) => sum + a.total, 0)
@@ -120,6 +123,11 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+          <p className={styles.countdown}>
+            <b>Prova em {formatBR(PROVA.data)}</b>
+            {daysToExam > 0 ? ` · faltam ${daysToExam} ${daysToExam === 1 ? 'dia' : 'dias'}` : ''}
+            {daysToSignup >= 0 ? ` · inscrições até ${formatBR(PROVA.inscricoesFim)}` : ''}
+          </p>
           <p className={styles.panelNote}>
             {streak > 0 ? `${streak} ${streak === 1 ? 'dia seguido' : 'dias seguidos'} estudando` : 'Estude hoje para iniciar uma sequência'}
           </p>

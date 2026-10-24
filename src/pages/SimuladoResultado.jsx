@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import StatBar from '../components/StatBar'
+import { BLOCOS, blocoDaMateria } from '../data/edital'
 import { subjectColor } from '../lib/subjectColor'
 import { formatDuration, getExam } from '../services/exams'
 import { getQuestionsByIds } from '../services/questions'
@@ -41,6 +42,20 @@ export default function SimuladoResultado() {
     perSubject.set(name, cur)
   }
 
+  // leitura pelo edital: Português e Direito eliminam com menos de 50% em cada bloco
+  const perBloco = new Map()
+  for (const [name, st] of perSubject) {
+    const bloco = blocoDaMateria(name)
+    if (!bloco) continue
+    const cur = perBloco.get(bloco.id) ?? { bloco, total: 0, correct: 0 }
+    cur.total += st.total
+    cur.correct += st.correct
+    perBloco.set(bloco.id, cur)
+  }
+  const blocos = BLOCOS.filter((b) => perBloco.has(b.id)).map((b) => perBloco.get(b.id))
+  const reprovadoEmBloco = blocos.some((b) => b.bloco.eliminatorio && percent(b.correct, b.total) < 50)
+  const notaFinal = Math.round((exam.correct / exam.total) * 100) / 10
+
   return (
     <section>
       <header className="page-header">
@@ -69,6 +84,41 @@ export default function SimuladoResultado() {
           </p>
         </div>
       </div>
+
+      {blocos.length > 0 && (
+        <div className="section">
+          <h2 className="section-title">Pela regra do edital</h2>
+          <div className="card">
+            {blocos.map(({ bloco, total, correct }) => {
+              const p = percent(correct, total)
+              const abaixo = bloco.eliminatorio && p < 50
+              return (
+                <div key={bloco.id} className={styles.bloco} data-bad={abaixo}>
+                  <div>
+                    <b>Bloco {bloco.id} · {bloco.nome}</b>
+                    <span className="muted" style={{ display: 'block', fontSize: '0.82rem' }}>
+                      {bloco.eliminatorio ? 'Eliminatório: mínimo de 50%' : 'Classificatório'} · {correct}/{total}
+                    </span>
+                  </div>
+                  <b className={styles.blocoPct}>{p}%</b>
+                  <span className={styles.blocoTag} data-ok={!abaixo}>
+                    {bloco.eliminatorio ? (abaixo ? 'abaixo do mínimo' : 'dentro do mínimo') : 'sem corte'}
+                  </span>
+                </div>
+              )
+            })}
+            <p className={styles.verdict} data-bad={reprovadoEmBloco || notaFinal < 5}>
+              Nota final: <b>{notaFinal.toFixed(1)}</b> (mínimo 5,0).{' '}
+              {reprovadoEmBloco
+                ? 'Neste simulado você ficaria abaixo de 50% em um bloco eliminatório.'
+                : notaFinal < 5
+                  ? 'Nota final abaixo do mínimo.'
+                  : 'Pelas regras de corte da prova objetiva, você passaria.'}{' '}
+              A redação é eliminatória e não entra nesta conta.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="section">
         <h2 className="section-title">Por matéria</h2>

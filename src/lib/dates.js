@@ -39,3 +39,8 @@ export function formatShort(iso) {
   const [, m, d] = iso.split('-')
   return `${d}/${m}`
 }
+
+// Dias entre duas datas AAAA-MM-DD (positivo se `to` é depois de `from`).
+export function daysBetween(from, to) {
+  return Math.round((toUTC(to) - toUTC(from)) / 86400000)
+}

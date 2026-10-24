@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 export async function listLessons() {
   const { data, error } = await supabase
     .from('lessons')
-    .select('id, subject_id, topic, title, channel, url, kind, watched, created_at')
+    .select('id, subject_id, topic, edital_key, title, channel, url, kind, watched, created_at')
     .order('created_at', { ascending: true })
     .order('id', { ascending: true })
   if (error) throw error

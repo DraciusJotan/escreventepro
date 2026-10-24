@@ -44,6 +44,8 @@ O Escrevente Pro junta as três coisas num app que funciona bem no celular (onde
 - **Resolver por sorteio**, com matérias e quantidade à escolha.
 - **Navegação Anterior/Próxima** com grade de gabarito por blocos e atalhos de teclado.
 - **Simulados cronometrados**: marcação sem correção imediata, nota ao final, resultado por matéria e histórico.
+- **Simulado modelo do edital**: 70 questões na distribuição da prova (Português 16, Direito 30, Conhecimentos Gerais 24), avisando quando o banco não tem questões suficientes de uma matéria. O resultado aplica a regra de corte: mínimo de 50% nos blocos eliminatórios e nota final mínima 5.
+- **Contagem regressiva** na tela inicial até a prova e o fim das inscrições.
 
 **Memória e constância**
 - **Revisão espaçada** (SM-2 simplificado): o que se erra volta em 1, 3, 8, 21… dias.
@@ -56,6 +58,7 @@ O Escrevente Pro junta as três coisas num app que funciona bem no celular (onde
 - Seção de **videoaulas** organizadas por matéria e assunto, com player incorporado e marcação de aulas assistidas.
 - O app **não hospeda vídeos**: guarda só links do YouTube (vídeo ou playlist), com lista inicial de aulas gratuitas verificadas e possibilidade de adicionar as próprias.
 - Atalho "Ver aulas de…" ao errar uma questão.
+- **Checklist do edital**: os assuntos do Edital nº 02/2026 por bloco e matéria, com marcação do que já foi estudado e ligação com as aulas de cada assunto. Os artigos indicados vêm do resumo do edital anterior e devem ser conferidos no Anexo VIII do edital oficial.
 
 **Gestão do banco**
 - Cadastro e edição de questões, matérias editáveis por usuário.
